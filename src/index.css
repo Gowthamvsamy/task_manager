@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.main-screen{
+  @apply h-screen w-screen px-10 py-5
+}
+
+.heading{
+  @apply text-3xl
+}
+
+.search-box{
+  @apply border-none outline-none w-full bg-transparent
+}
+
+.button{
+  @apply px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 rounded-md
+}
+
+.theme-box{
+  @apply border border-black rounded-md p-2
+}
+
+.task-input{
+  @apply border rounded border-black px-2 py-1
+}
+
+.task{
+  @apply flex justify-evenly gap-5
+}
+
+.task-list {
+  @apply border-2 border-black/50 rounded-md h-[450px] w-full p-4
+}
