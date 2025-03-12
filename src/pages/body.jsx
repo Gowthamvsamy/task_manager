@@ -4,15 +4,13 @@ import Search from '../component/search'
 import { GoSun, GoMoon } from "react-icons/go";
 import { useTheme } from '../context/themeContext';
 import TaskList from '../component/taskList';
+import { ToastContainer, toast } from 'react-toastify';
 
 
 function Body() {
 
     // use context
-    const { theme, toggleTheme } = useTheme();
-
-    // Hooks
-    const [open, setOpen] = useState(false);
+    const { theme, toggleTheme, open, setOpen } = useTheme();
 
     // Open Add Task form
     const openForm = () => {
@@ -52,11 +50,14 @@ function Body() {
         }
 
         setOpen(false);
+
+        toast("Task added successfully")
     };
 
     return (
         <>
             <div className={`main-screen ${theme ? 'bg-gray-400' : 'bg-white'}`}>
+                <ToastContainer />
                 <div className='flex justify-between items-center'>
                     <p className='heading'>Tsak Manager</p>
                     <button onClick={toggleTheme} className={`theme-box`}>{theme ? <GoSun /> : <GoMoon />}</button>

@@ -7,6 +7,7 @@ export const useTheme = () => useContext(ThemeContext);
 export const ThemeProvider = ({children}) => {
 
     const [theme, setTheme] = useState(false);
+    const [open, setOpen] = useState(false);
 
     const toggleTheme = () => {
         setTheme(prevMode => !prevMode);
@@ -14,7 +15,7 @@ export const ThemeProvider = ({children}) => {
 
     return(
         <>
-            <ThemeContext.Provider value={{theme, toggleTheme}}>
+            <ThemeContext.Provider value={{theme, toggleTheme, open, setOpen}}>
                 {children}
             </ThemeContext.Provider>
         </>
