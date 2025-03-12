@@ -19,10 +19,6 @@ function Body() {
         setOpen(true);
     }
 
-    const closeForm = () => {
-        setOpen(false)
-    }
-
     // Form Data
     const [formData, setFormData] = useState({
         task_id: '',
@@ -54,6 +50,8 @@ function Body() {
         } catch (error) {
             console.error("Error submitting form:", error);
         }
+
+        setOpen(false);
     };
 
     return (
@@ -136,7 +134,7 @@ function Body() {
                                     onChange={handleChange}
                                 ></textarea>
                             </div>
-                            <button type="submit" onClick={closeForm} className='button'>Add&nbsp;Task</button>
+                            <button type="submit" className='button'>Add&nbsp;Task</button>
                         </form>
                     </div>
                 </div>
