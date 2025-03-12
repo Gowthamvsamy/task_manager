@@ -1,3 +1,4 @@
+// import files
 import React, { useState } from 'react'
 import Search from '../component/search'
 import { GoSun, GoMoon } from "react-icons/go";
@@ -7,13 +8,22 @@ import TaskList from '../component/taskList';
 
 function Body() {
 
+    // use context
     const { theme, toggleTheme } = useTheme();
+
+    // Hooks
     const [open, setOpen] = useState(false);
 
+    // Open Add Task form
     const openForm = () => {
         setOpen(true);
     }
 
+    const closeForm = () => {
+        setOpen(false)
+    }
+
+    // Form Data
     const [formData, setFormData] = useState({
         task_id: '',
         task_name: '',
@@ -27,11 +37,24 @@ function Body() {
         setFormData({ ...formData, [name]: value });
     };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    //     // Add new task to your state or API here
-    // }
+        try {
+            const response = await fetch("http://localhost:3000/save-data", {
+                method: "post",
+                headers: {
+                    "content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const result = await response.json();
+            console.log(result.message);
+        } catch (error) {
+            console.error("Error submitting form:", error);
+        }
+    };
 
     return (
         <>
@@ -51,7 +74,7 @@ function Body() {
             {open ? (
                 <div className='h-screen w-screen backdrop-saturate-125 bg-white/80 flex justify-center items-center top-0 absolute'>
                     <div className='bg-white p-10 border rounded shadow-lg'>
-                        <form className='flex flex-col gap-5'> {/* onSubmit={handleSubmit} */}
+                        <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
                             <div className='flex gap-5'>
                                 <div className='flex flex-col'>
                                     <label htmlFor="id">Task ID</label>
@@ -87,12 +110,18 @@ function Body() {
                                 </div>
                                 <div className='flex flex-col w-full'>
                                     <label htmlFor="assign">Assign To</label>
-                                    <select className='task-input'>
-                                        <option name="assign" value={formData.assign}>Employer 1</option>
-                                        <option name="assign" value={formData.assign}>Employer 2</option>
-                                        <option name="assign" value={formData.assign}>Employer 3</option>
-                                        <option name="assign" value={formData.assign}>Employer 4</option>
-                                        <option name="assign" value={formData.assign}>Employer 5</option>
+                                    <select
+                                        className='task-input'
+                                        name='assign'
+                                        value={formData.assign}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select an Employe</option>
+                                        <option value="employe1">Employer 1</option>
+                                        <option value="employe2">Employer 2</option>
+                                        <option value="employe3">Employer 3</option>
+                                        <option value="employe4">Employer 4</option>
+                                        <option value="employe5">Employer 5</option>
                                     </select>
                                 </div>
                             </div>
@@ -103,9 +132,11 @@ function Body() {
                                     className='task-input'
                                     rows={4}
                                     name="description"
+                                    value={formData.description}
+                                    onChange={handleChange}
                                 ></textarea>
                             </div>
-                            <button type="submit" className='button'>Add&nbsp;Task</button>
+                            <button type="submit" onClick={closeForm} className='button'>Add&nbsp;Task</button>
                         </form>
                     </div>
                 </div>
