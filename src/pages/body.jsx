@@ -9,6 +9,8 @@ import { ToastContainer, toast } from 'react-toastify';
 
 function Body() {
 
+    const [searchValue, setSearchValue] = useState("");
+
     // use context
     const { theme, toggleTheme, open, setOpen } = useTheme();
 
@@ -64,11 +66,11 @@ function Body() {
                     <button onClick={toggleTheme} className={`theme-box`}>{theme ? <GoSun /> : <GoMoon />}</button>
                 </div>
                 <div className='my-6 flex gap-5 w-full'>
-                    <Search />
+                    <Search setSearchValue={setSearchValue} />
                     <button className='button' onClick={openForm}>Add&nbsp;Task</button>
                 </div>
                 <div>
-                    <TaskList />
+                    <TaskList searchValue={searchValue}/>
                 </div>
             </div>
             {open ? (

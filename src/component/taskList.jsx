@@ -3,7 +3,7 @@ import { useTheme } from '../context/themeContext'
 import axios from 'axios';
 import rightArrow from '../assets/rightAr.png'
 
-function TaskList() {
+function TaskList({ searchValue }) {
 
     const { open } = useTheme();
 
@@ -24,6 +24,12 @@ function TaskList() {
         getData()
     }, [open])
 
+    const filteredTasks = taskData.filter((task) =>
+        task.task_name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+
+    //   console.log("filteredTasks", filteredTasks)
+
     const stProgress = () => {
 
     }
@@ -33,8 +39,7 @@ function TaskList() {
             <div className='task'>
                 <div className='task-list'>
                     <p>Todo</p>
-                    {taskData
-                        .filter(task => task.status === "Todo")
+                    {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
                             <div key={task.task_id} className='task-item todo'>
                                 <div className='flex justify-between'>
@@ -57,7 +62,7 @@ function TaskList() {
                 </div>
                 <div className='task-list'>
                     <p>In progress</p>
-                    {taskData
+                    {filteredTasks
                         .filter(task => task.status === "In progress")
                         .map(task => (
                             <div key={task.task_id} className='task-item progress'>
@@ -81,7 +86,7 @@ function TaskList() {
                 </div>
                 <div className='task-list'>
                     <p>Done</p>
-                    {taskData
+                    {filteredTasks
                         .filter(task => task.status === "Done")
                         .map(task => (
                             <div key={task.task_id} className='task-item done'>
