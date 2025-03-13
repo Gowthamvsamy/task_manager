@@ -24,6 +24,7 @@ function Body() {
         deadline: '',
         assign: '',
         description: '',
+        status: 'Todo',
     });
 
     const handleChange = (e) => {

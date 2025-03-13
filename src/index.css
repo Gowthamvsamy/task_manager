@@ -2,34 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-.main-screen{
+.main-screen {
   @apply h-screen w-screen px-10 py-5
 }
 
-.heading{
+.heading {
   @apply text-3xl
 }
 
-.search-box{
+.search-box {
   @apply border-none outline-none w-full bg-transparent
 }
 
-.button{
+.button {
   @apply px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 rounded-md
 }
 
-.theme-box{
+.theme-box {
   @apply border border-black rounded-md p-2
 }
 
-.task-input{
+.task-input {
   @apply border rounded border-black px-2 py-1
 }
 
-.task{
+.task {
   @apply flex justify-evenly gap-5
 }
 
 .task-list {
-  @apply border-2 border-black/50 rounded-md h-[450px] w-full p-4
+  @apply border-2 bg-gray-200 border-black/30 shadow-md rounded-md h-[450px] w-full p-4 overflow-auto flex flex-col gap-y-5
+}
+
+.task-item {
+  @apply bg-white py-2 px-3 border-2 rounded-md shadow-md
+}
+
+.task-list > .todo {
+  @apply border-amber-900 border-opacity-70 
+}
+
+.task-list > .progress {
+  @apply border-blue-900 border-opacity-70 
+}
+
+.task-list > .done {
+  @apply border-green-900 border-opacity-70 
 }
