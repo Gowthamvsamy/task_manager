@@ -10,28 +10,32 @@ function TaskList({ searchValue }) {
     const [taskData, setTaskData] = useState([]);
 
     const getData = () => {
-        axios.get("https://run.mocky.io/v3/1e884ea1-e41e-42c1-8d00-ea5ec85e4502")
+        axios.get("http://localhost:4000/task/all")
             .then(response => {
-                console.log("API Response:", response.data); // Debugging
-                setTaskData(response.data); // No need to parse
+
+                if (response.data && Array.isArray(response.data.data)) {
+                    setTaskData(response.data.data);
+                } else {
+                    console.error("Unexpected response format:", response.data);
+                    setTaskData([]);
+                }
             })
             .catch(error => {
                 console.log("Fetch error:", error);
+                setTaskData([]); 
             });
     };
-
+    
     useEffect(() => {
         getData()
     }, [open])
 
-    const filteredTasks = taskData.filter((task) =>
+    const filteredTasks = Array.isArray(taskData) ? taskData.filter((task) =>
         task.task_name.toLowerCase().includes(searchValue.toLowerCase())
-      );
+    ) : [];
 
-    //   console.log("filteredTasks", filteredTasks)
-
-    const stProgress = () => {
-
+    const moveToInProgress = (task) => {
+        
     }
 
     return (
@@ -44,7 +48,7 @@ function TaskList({ searchValue }) {
                             <div key={task.task_id} className='task-item todo'>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button onClick={stProgress}>
+                                    <button onClick={() => moveToInProgress(task.task_id)}>
                                         <img src={rightArrow} alt="404" className='w-5' />
                                     </button>
                                 </div>
@@ -62,8 +66,7 @@ function TaskList({ searchValue }) {
                 </div>
                 <div className='task-list'>
                     <p>In progress</p>
-                    {filteredTasks
-                        .filter(task => task.status === "In progress")
+                    {filteredTasks.filter(task => task.status === "In progress")
                         .map(task => (
                             <div key={task.task_id} className='task-item progress'>
                                 <div className='flex justify-between'>
@@ -86,8 +89,7 @@ function TaskList({ searchValue }) {
                 </div>
                 <div className='task-list'>
                     <p>Done</p>
-                    {filteredTasks
-                        .filter(task => task.status === "Done")
+                    {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
                             <div key={task.task_id} className='task-item done'>
                                 <div className='flex justify-between'>
