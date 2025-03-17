@@ -1,13 +1,38 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { useTheme } from '../context/themeContext'
 import axios from 'axios';
 import rightArrow from '../assets/rightAr.png'
+import { toast } from 'react-toastify';
+import EditForm from './editForm';
+
+// Initial state
+const initialState = "Todo";
+
+//Reducer function
+const reducer = (status, action) => {
+    switch (action.type) {
+        case "INPROGRESS":
+            return "In Progress";
+        case "DONE":
+            return "Done";
+        case "DELETE":
+            return " ";
+        // case "RSDONE":
+        //     return "In Progress";
+    }
+}
+
 
 function TaskList({ searchValue }) {
 
     const { open } = useTheme();
 
     const [taskData, setTaskData] = useState([]);
+    const [editlist, setEditlist] = useState();
+    const [editForm, setEditForm] = useState(false);
+
+    // useReducer Hook
+    const [, dispatchStatus] = useReducer(reducer, initialState);
 
     const getData = () => {
         axios.get("http://localhost:4000/task/all")
@@ -22,10 +47,10 @@ function TaskList({ searchValue }) {
             })
             .catch(error => {
                 console.log("Fetch error:", error);
-                setTaskData([]); 
+                setTaskData([]);
             });
     };
-    
+
     useEffect(() => {
         getData()
     }, [open])
@@ -34,9 +59,35 @@ function TaskList({ searchValue }) {
         task.task_name.toLowerCase().includes(searchValue.toLowerCase())
     ) : [];
 
-    const moveToInProgress = (task) => {
-        
+    const moveToInProgress = (id, newStatus) => {
+        // console.log(id)
+        axios.patch(`http://localhost:4000/task/update/${id}`, { status: newStatus }, {
+            headers: {
+                "content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                console.log(response.data.message);
+                toast.success("Task Updated Successfully");
+                dispatchStatus({ type: newStatus.toUpperCase().replace(" ", "") });
+            })
+            .catch((error) => {
+                console.error("Error changing task:", error)
+                toast.error("Task Changing Error")
+            })
+            .finally(() => {
+                getData()
+            });
     }
+
+    const viewEdite = (task) => {
+        setEditlist(task)
+        setEditForm(true)
+    }
+
+    useEffect(() => {
+        
+    }, [editlist]);
 
     return (
         <>
@@ -45,14 +96,17 @@ function TaskList({ searchValue }) {
                     <p>Todo</p>
                     {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
-                            <div key={task.task_id} className='task-item todo'>
+                            <div key={task.task_id} className='task-item todo' onClick={() => viewEdite(task)}>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button onClick={() => moveToInProgress(task.task_id)}>
+                                    <button onClick={() => {
+                                        moveToInProgress(task._id, "In Progress")
+                                        dispatchStatus({ type: "In Progress" })
+                                    }}>
                                         <img src={rightArrow} alt="404" className='w-5' />
                                     </button>
                                 </div>
-                                <div>{task.description}</div>
+                                <div className='my-3'>{task.description}</div>
                                 <div className='flex justify-between '>
                                     <div>{task.deadline}</div>
                                     <div className='flex gap-3'>
@@ -66,16 +120,19 @@ function TaskList({ searchValue }) {
                 </div>
                 <div className='task-list'>
                     <p>In progress</p>
-                    {filteredTasks.filter(task => task.status === "In progress")
+                    {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
-                            <div key={task.task_id} className='task-item progress'>
+                            <div key={task.task_id} className='task-item progress' onClick={() => viewEdite(task)}>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button>
+                                    <button onClick={() => {
+                                        moveToInProgress(task._id, "Done")
+                                        dispatchStatus({ type: "Done" })
+                                    }}>
                                         <img src={rightArrow} alt="404" className='w-5' />
                                     </button>
                                 </div>
-                                <div>{task.description}</div>
+                                <div className='my-3'>{task.description}</div>
                                 <div className='flex justify-between '>
                                     <div>{task.deadline}</div>
                                     <div className='flex gap-3'>
@@ -91,14 +148,14 @@ function TaskList({ searchValue }) {
                     <p>Done</p>
                     {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
-                            <div key={task.task_id} className='task-item done'>
+                            <div key={task.task_id} className='task-item done' onClick={() => viewEdite(task)}>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button>
+                                    {/* <button>
                                         <img src={rightArrow} alt="404" className='w-5' />
-                                    </button>
+                                    </button> */}
                                 </div>
-                                <div>{task.description}</div>
+                                <div className='my-3'>{task.description}</div>
                                 <div className='flex justify-between '>
                                     <div>{task.deadline}</div>
                                     <div className='flex gap-3'>
@@ -111,6 +168,9 @@ function TaskList({ searchValue }) {
                     }
                 </div>
             </div>
+            {editForm && (
+                <EditForm   task={editlist} onClose={() => setEditForm(false)}/>
+            )}
         </>
     )
 }

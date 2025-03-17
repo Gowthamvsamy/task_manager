@@ -5,6 +5,8 @@ import { GoSun, GoMoon } from "react-icons/go";
 import { useTheme } from '../context/themeContext';
 import TaskList from '../component/taskList';
 import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios';
+import close from '../assets/close.png';
 
 
 function Body() {
@@ -37,25 +39,30 @@ function Body() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch("http://localhost:4000/task/add", {
-                method: "post",
-                headers: {
-                    "content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
+        axios.post("http://localhost:4000/task/add", formData, {
+            headers: {
+                "content-Type": "application/json",
+            },
+        })
+            .then((response) => {
+                console.log(response.data.message);
+                toast.success("Task added successfully");
+            })
+            .catch((error) => {
+                console.error("Error submitting form:", error);
+                toast.error(error.response?.data?.message || "Failed to add task");
+            })
+            .finally(() => {
+                clearInput();
             });
+    };
 
-            const result = await response.json();
-            console.log(result.message);
-        } catch (error) {
-            console.error("Error submitting form:", error);
-        }
+    const clearInput = () => {
+        var allInputs = document.querySelectorAll('input');
+        allInputs.forEach(singleInput => singleInput.value = '');
 
         setOpen(false);
-
-        toast("Task added successfully")
-    };
+    }
 
     return (
         <>
@@ -70,13 +77,19 @@ function Body() {
                     <button className='button' onClick={openForm}>Add&nbsp;Task</button>
                 </div>
                 <div>
-                    <TaskList searchValue={searchValue}/>
+                    <TaskList searchValue={searchValue} />
                 </div>
             </div>
             {open ? (
                 <div className='h-screen w-screen backdrop-saturate-125 bg-white/80 flex justify-center items-center top-0 absolute'>
                     <div className='bg-white p-10 border rounded shadow-lg'>
-                        <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
+                        <form className='flex flex-col gap-5' onSubmit={() => {
+                            handleSubmit
+                            clearInput
+                        }}>
+                            <button className='border rounded p-1 w-fit ms-auto cursor-pointer' onClick={clearInput}>
+                                <img src={close} alt="404" className='w-6' />
+                            </button>
                             <div className='flex gap-5'>
                                 <div className='flex flex-col'>
                                     <label htmlFor="id">Task ID</label>
