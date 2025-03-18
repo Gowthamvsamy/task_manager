@@ -36,30 +36,34 @@ function Body() {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         axios.post("http://localhost:4000/task/add", formData, {
             headers: {
-                "content-Type": "application/json",
+                "Content-Type": "application/json",
             },
         })
             .then((response) => {
-                console.log(response.data.message);
+                console.log("Response:", response.data);
                 toast.success("Task added successfully");
+                clearInput();
             })
             .catch((error) => {
                 console.error("Error submitting form:", error);
                 toast.error(error.response?.data?.message || "Failed to add task");
-            })
-            .finally(() => {
-                clearInput();
             });
     };
 
+
     const clearInput = () => {
-        var allInputs = document.querySelectorAll('input');
-        allInputs.forEach(singleInput => singleInput.value = '');
+        setFormData({
+            task_id: '',
+            task_name: '',
+            deadline: '',
+            assign: '',
+            description: '',
+        });
 
         setOpen(false);
     }
@@ -83,10 +87,7 @@ function Body() {
             {open ? (
                 <div className='h-screen w-screen backdrop-saturate-125 bg-white/80 flex justify-center items-center top-0 absolute'>
                     <div className='bg-white p-10 border rounded shadow-lg'>
-                        <form className='flex flex-col gap-5' onSubmit={() => {
-                            handleSubmit
-                            clearInput
-                        }}>
+                        <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
                             <button className='border rounded p-1 w-fit ms-auto cursor-pointer' onClick={clearInput}>
                                 <img src={close} alt="404" className='w-6' />
                             </button>
@@ -99,6 +100,7 @@ function Body() {
                                         value={formData.id}
                                         onChange={handleChange}
                                         className="task-input"
+                                        placeholder='eg: TS-1'
                                     />
                                 </div>
                                 <div className='flex flex-col'>
@@ -109,6 +111,7 @@ function Body() {
                                         value={formData.name}
                                         onChange={handleChange}
                                         className="task-input"
+                                        placeholder='eg: Button'
                                     />
                                 </div>
                             </div>
@@ -117,11 +120,12 @@ function Body() {
                                 <div className='flex flex-col'>
                                     <label htmlFor="deadline">Deadline</label>
                                     <input
-                                        type="text"
+                                        type="date"
                                         name="deadline"
                                         value={formData.deadline}
                                         onChange={handleChange}
-                                        className='task-input' />
+                                        className='task-input'
+                                    />
                                 </div>
                                 <div className='flex flex-col w-full'>
                                     <label htmlFor="assign">Assign To</label>
@@ -149,6 +153,7 @@ function Body() {
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
+                                    placeholder='description'
                                 ></textarea>
                             </div>
                             <button type="submit" className='button'>Add&nbsp;Task</button>

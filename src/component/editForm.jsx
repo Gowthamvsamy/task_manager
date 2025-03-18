@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import close from '../assets/close.png'
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 
-function EditForm({ task, onClose }) {
+function EditForm({ task, onClose, setUpdated }) {
 
-    // console.log('task', task);
     const [updatedTask, setUpdatedTask] = useState(task);
 
     const handleChange = (event) => {
@@ -23,12 +23,13 @@ function EditForm({ task, onClose }) {
         if (isConfirmed) {
             axios.patch(`http://localhost:4000/task/update/${updatedTask._id}`, updatedTask)
                 .then(() => {
-                    alert("Task updated successfully");
+                    toast.success("Task updated successfully");
                     onClose(false);
+                    setUpdated(true)
                 })
                 .catch((error) => {
                     console.error("Error updating task:", error);
-                    alert("Failed to update task");
+                    toast.error("Failed to update task");
                 });
         }
     };
@@ -70,7 +71,7 @@ function EditForm({ task, onClose }) {
                             <div className='flex flex-col'>
                                 <label htmlFor="deadline">Deadline</label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="deadline"
                                     value={updatedTask.deadline}
                                     onChange={handleChange}

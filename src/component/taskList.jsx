@@ -4,6 +4,7 @@ import axios from 'axios';
 import rightArrow from '../assets/rightAr.png'
 import { toast } from 'react-toastify';
 import EditForm from './editForm';
+import edit from '../assets/edit-icon.png'
 
 // Initial state
 const initialState = "Todo";
@@ -30,6 +31,7 @@ function TaskList({ searchValue }) {
     const [taskData, setTaskData] = useState([]);
     const [editlist, setEditlist] = useState();
     const [editForm, setEditForm] = useState(false);
+    const [Updated, setUpdated] = useState(false)
 
     // useReducer Hook
     const [, dispatchStatus] = useReducer(reducer, initialState);
@@ -50,17 +52,29 @@ function TaskList({ searchValue }) {
                 setTaskData([]);
             });
     };
+    
 
     useEffect(() => {
         getData()
     }, [open])
+
+    useEffect(() => {
+        if(Updated){
+            getData()
+            setUpdated(false)
+        }
+        
+    }, [Updated])
+
+    console.log("Updated", Updated);
+
 
     const filteredTasks = Array.isArray(taskData) ? taskData.filter((task) =>
         task.task_name.toLowerCase().includes(searchValue.toLowerCase())
     ) : [];
 
     const moveToInProgress = (id, newStatus) => {
-        // console.log(id)
+
         axios.patch(`http://localhost:4000/task/update/${id}`, { status: newStatus }, {
             headers: {
                 "content-Type": "application/json",
@@ -85,10 +99,6 @@ function TaskList({ searchValue }) {
         setEditForm(true)
     }
 
-    useEffect(() => {
-        
-    }, [editlist]);
-
     return (
         <>
             <div className='task'>
@@ -96,15 +106,20 @@ function TaskList({ searchValue }) {
                     <p>Todo</p>
                     {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
-                            <div key={task.task_id} className='task-item todo' onClick={() => viewEdite(task)}>
+                            <div key={task.task_id} className='task-item todo'>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button onClick={() => {
-                                        moveToInProgress(task._id, "In Progress")
-                                        dispatchStatus({ type: "In Progress" })
-                                    }}>
-                                        <img src={rightArrow} alt="404" className='w-5' />
-                                    </button>
+                                    <div className='flex gap-2'>
+                                        <button onClick={() => viewEdite(task)}>
+                                            <img src={edit} alt="404" className='w-[19px]' />
+                                        </button>
+                                        <button onClick={() => {
+                                            moveToInProgress(task._id, "In Progress")
+                                            dispatchStatus({ type: "In Progress" })
+                                        }}>
+                                            <img src={rightArrow} alt="404" className='w-5' />
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className='my-3'>{task.description}</div>
                                 <div className='flex justify-between '>
@@ -122,15 +137,21 @@ function TaskList({ searchValue }) {
                     <p>In progress</p>
                     {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
-                            <div key={task.task_id} className='task-item progress' onClick={() => viewEdite(task)}>
+                            <div key={task.task_id} className='task-item progress'>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button onClick={() => {
-                                        moveToInProgress(task._id, "Done")
-                                        dispatchStatus({ type: "Done" })
-                                    }}>
-                                        <img src={rightArrow} alt="404" className='w-5' />
-                                    </button>
+                                    <div className='flex gap-2'>
+                                        <button onClick={() => viewEdite(task)}>
+                                            <img src={edit} alt="404" className='w-[19px]' />
+                                        </button>
+                                        <button onClick={() => {
+                                            moveToInProgress(task._id, "Done")
+                                            dispatchStatus({ type: "Done" })
+                                        }}>
+                                            <img src={rightArrow} alt="404" className='w-5' />
+                                        </button>
+                                    </div>
+
                                 </div>
                                 <div className='my-3'>{task.description}</div>
                                 <div className='flex justify-between '>
@@ -148,12 +169,12 @@ function TaskList({ searchValue }) {
                     <p>Done</p>
                     {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
-                            <div key={task.task_id} className='task-item done' onClick={() => viewEdite(task)}>
+                            <div key={task.task_id} className='task-item done'>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    {/* <button>
-                                        <img src={rightArrow} alt="404" className='w-5' />
-                                    </button> */}
+                                    <button onClick={() => viewEdite(task)}>
+                                        <img src={edit} alt="404" className='w-[19px]' />
+                                    </button>
                                 </div>
                                 <div className='my-3'>{task.description}</div>
                                 <div className='flex justify-between '>
@@ -169,7 +190,7 @@ function TaskList({ searchValue }) {
                 </div>
             </div>
             {editForm && (
-                <EditForm   task={editlist} onClose={() => setEditForm(false)}/>
+                <EditForm setUpdated={setUpdated} task={editlist} onClose={() => setEditForm(false)} />
             )}
         </>
     )

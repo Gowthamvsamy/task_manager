@@ -18,6 +18,7 @@ function Search({ setSearchValue }) {
           className='search-box'
           name="search"
           onChange={handleSearch}
+          placeholder='Search for the task name here...'
         />
         <img src={search} alt="" className='w-7 py-3 pe-3' />
       </div>
