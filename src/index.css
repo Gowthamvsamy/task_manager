@@ -23,7 +23,7 @@
 }
 
 .task-input {
-  @apply border rounded border-black px-2 py-1
+  @apply border rounded border-black px-2 py-1 w-full
 }
 
 .task {

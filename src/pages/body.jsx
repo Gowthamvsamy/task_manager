@@ -7,6 +7,7 @@ import TaskList from '../component/taskList';
 import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import close from '../assets/close.png';
+import logo from '../assets/logo.png'
 
 
 function Body() {
@@ -73,7 +74,11 @@ function Body() {
             <div className={`main-screen ${theme ? 'bg-gray-400' : 'bg-white'}`}>
                 <ToastContainer />
                 <div className='flex justify-between items-center'>
-                    <p className='heading'>Tsak Manager</p>
+                    <div className='flex gap-2'>
+                    <img src={logo} alt="404" className='w-11'/>
+                    <p className='heading'>Task Manager</p>
+                    </div>
+                    
                     <button onClick={toggleTheme} className={`theme-box`}>{theme ? <GoSun /> : <GoMoon />}</button>
                 </div>
                 <div className='my-6 flex gap-5 w-full'>

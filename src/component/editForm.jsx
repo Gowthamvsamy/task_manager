@@ -51,8 +51,8 @@ function EditForm({ task, onClose, setUpdated }) {
                                     type="text"
                                     name="task_id"
                                     value={updatedTask.task_id}
-                                    onChange={handleChange}
                                     className="task-input"
+                                    disabled
                                 />
                             </div>
                             <div className='flex flex-col'>
@@ -61,8 +61,8 @@ function EditForm({ task, onClose, setUpdated }) {
                                     type="text"
                                     name="task_name"
                                     value={updatedTask.task_name}
-                                    onChange={handleChange}
                                     className="task-input"
+                                    disabled
                                 />
                             </div>
                         </div>
