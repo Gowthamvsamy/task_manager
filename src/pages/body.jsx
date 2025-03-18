@@ -37,6 +37,7 @@ function Body() {
         setFormData({ ...formData, [name]: value });
     };
 
+    // Task creation
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -45,8 +46,7 @@ function Body() {
                 "Content-Type": "application/json",
             },
         })
-            .then((response) => {
-                console.log("Response:", response.data);
+            .then(() => {
                 toast.success("Task added successfully");
                 clearInput();
             })
@@ -56,7 +56,7 @@ function Body() {
             });
     };
 
-
+    // Clear form Input
     const clearInput = () => {
         setFormData({
             task_id: '',
@@ -71,29 +71,32 @@ function Body() {
 
     return (
         <>
-            <div className={`main-screen ${theme ? 'bg-gray-400' : 'bg-white'}`}>
+            <div className={`main-screen ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
                 <ToastContainer />
-                <div className='flex justify-between items-center'>
-                    <div className='flex gap-2'>
-                    <img src={logo} alt="404" className='w-11'/>
-                    <p className='heading'>Task Manager</p>
+                <div className='navbar'>
+                    <div className='navContent'>
+                        <img src={logo} alt="404" className='w-10' />
+                        <p className={`heading ${theme ? 'text-black' : 'text-white'}`}>Task Manager</p>
                     </div>
-                    
-                    <button onClick={toggleTheme} className={`theme-box`}>{theme ? <GoSun /> : <GoMoon />}</button>
+
+                    <div className='navContent'>
+                        <div className='my-6 flex gap-3'>
+                            <Search setSearchValue={setSearchValue} />
+                            <button className='button' onClick={openForm}>Add&nbsp;Task</button>
+                        </div>
+                        <button onClick={toggleTheme} className={`theme-box ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white'/>}</button>
+                    </div>
                 </div>
-                <div className='my-6 flex gap-5 w-full'>
-                    <Search setSearchValue={setSearchValue} />
-                    <button className='button' onClick={openForm}>Add&nbsp;Task</button>
-                </div>
-                <div>
+
+                <div className='px-10'>
                     <TaskList searchValue={searchValue} />
                 </div>
             </div>
             {open ? (
-                <div className='h-screen w-screen backdrop-saturate-125 bg-white/80 flex justify-center items-center top-0 absolute'>
-                    <div className='bg-white p-10 border rounded shadow-lg'>
+                <div className='h-screen w-screen edit-form'>
+                    <div className='formBg'>
                         <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
-                            <button className='border rounded p-1 w-fit ms-auto cursor-pointer' onClick={clearInput}>
+                            <button className='formClose' onClick={clearInput}>
                                 <img src={close} alt="404" className='w-6' />
                             </button>
                             <div className='flex gap-5'>

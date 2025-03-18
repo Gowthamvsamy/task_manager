@@ -38,10 +38,10 @@ function EditForm({ task, onClose, setUpdated }) {
 
     return (
         <>
-            <div className='h-[96%] w-[96%] backdrop-saturate-125 bg-white/80 flex justify-center items-center top-0 absolute'>
-                <div className='bg-white p-10 border rounded shadow-lg'>
+            <div className='edit-form h-[96%] w-[96%]'>
+                <div className='formBg'>
                     <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
-                        <button className='border rounded p-1 w-fit ms-auto cursor-pointer' onClick={() => onClose(false)} >
+                        <button className='formClose' onClick={() => onClose(false)} >
                             <img src={close} alt="404" className='w-6' />
                         </button>
                         <div className='flex gap-5'>

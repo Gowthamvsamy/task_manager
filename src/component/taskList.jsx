@@ -48,26 +48,23 @@ function TaskList({ searchValue }) {
                 }
             })
             .catch(error => {
-                console.log("Fetch error:", error);
+                console.error("Fetch error:", error);
                 setTaskData([]);
             });
     };
-    
+
 
     useEffect(() => {
         getData()
     }, [open])
 
     useEffect(() => {
-        if(Updated){
+        if (Updated) {
             getData()
             setUpdated(false)
         }
-        
+
     }, [Updated])
-
-    console.log("Updated", Updated);
-
 
     const filteredTasks = Array.isArray(taskData) ? taskData.filter((task) =>
         task.task_name.toLowerCase().includes(searchValue.toLowerCase())
@@ -80,8 +77,7 @@ function TaskList({ searchValue }) {
                 "content-Type": "application/json",
             },
         })
-            .then((response) => {
-                console.log(response.data.message);
+            .then(() => {
                 toast.success("Task Updated Successfully");
                 dispatchStatus({ type: newStatus.toUpperCase().replace(" ", "") });
             })
@@ -103,10 +99,12 @@ function TaskList({ searchValue }) {
         <>
             <div className='task'>
                 <div className='task-list'>
-                    <p>Todo</p>
+                    <div className='task-heading todo'>
+                        <p>Todo</p>
+                    </div>
                     {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
-                            <div key={task.task_id} className='task-item todo'>
+                            <div key={task.task_id} className='task-item '>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
                                     <div className='flex gap-2'>
@@ -134,10 +132,12 @@ function TaskList({ searchValue }) {
                     }
                 </div>
                 <div className='task-list'>
-                    <p>In progress</p>
+                    <div className='task-heading progress'>
+                        <p>In progress</p>
+                    </div>
                     {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
-                            <div key={task.task_id} className='task-item progress'>
+                            <div key={task.task_id} className='task-item '>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
                                     <div className='flex gap-2'>
@@ -166,10 +166,12 @@ function TaskList({ searchValue }) {
                     }
                 </div>
                 <div className='task-list'>
-                    <p>Done</p>
+                    <div className='task-heading done'>
+                        <p>Done</p>
+                    </div>
                     {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
-                            <div key={task.task_id} className='task-item done'>
+                            <div key={task.task_id} className='task-item '>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
                                     <button onClick={() => viewEdite(task)}>

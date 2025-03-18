@@ -12,15 +12,15 @@ function Search({ setSearchValue }) {
 
   return (
     <>
-      <div className={`flex items-center pl-3 border rounded-md w-full ${theme ? "bg-white border-white" : "bg-gray-100 border-black"}`}>
+      <div className={`searchBox ${theme ? "shadow-black" : "shadow-white"}`}>
         <input
           type="search"
           className='search-box'
           name="search"
           onChange={handleSearch}
-          placeholder='Search for the task name here...'
+          placeholder='Search for the name...'
         />
-        <img src={search} alt="" className='w-7 py-3 pe-3' />
+        <img src={search} alt="404" className='w-7 py-3 pe-3' />
       </div>
     </>
   )
