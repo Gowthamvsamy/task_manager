@@ -18,9 +18,9 @@ function Body() {
     const { theme, toggleTheme, open, setOpen } = useTheme();
 
     // Open Add Task form
-    const openForm = () => {
-        setOpen(true);
-    }
+    // const openForm = () => {
+    //     setOpen(true);
+    // }
 
     // Form Data
     const [formData, setFormData] = useState({
@@ -71,7 +71,7 @@ function Body() {
 
     return (
         <>
-            <div className={`main-screen ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
+            <div className={`h-screen ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
                 <ToastContainer />
                 <div className='navbar'>
                     <div className='navContent'>
@@ -82,9 +82,9 @@ function Body() {
                     <div className='navContent'>
                         <div className='my-6 flex gap-3'>
                             <Search setSearchValue={setSearchValue} />
-                            <button className='button' onClick={openForm}>Add&nbsp;Task</button>
+                            {/* <button className='button' onClick={openForm}>Add&nbsp;Task</button> */}
                         </div>
-                        <button onClick={toggleTheme} className={`theme-box ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white'/>}</button>
+                        <button onClick={toggleTheme} className={`theme-box ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white' />}</button>
                     </div>
                 </div>
 
@@ -92,41 +92,43 @@ function Body() {
                     <TaskList searchValue={searchValue} />
                 </div>
             </div>
+
             {open ? (
-                <div className='h-screen w-screen edit-form'>
+                <div className={`h-screen w-screen edit-form ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
                     <div className='formBg'>
                         <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
                             <button className='formClose' onClick={clearInput}>
                                 <img src={close} alt="404" className='w-6' />
                             </button>
+                            <p className='text-2xl font-semibold text-center -mt-3 mb-3'>Add Task Form</p>
                             <div className='flex gap-5'>
                                 <div className='flex flex-col'>
-                                    <label htmlFor="id">Task ID</label>
+                                    {/* <label htmlFor="id">Task ID</label> */}
                                     <input
                                         type="text"
                                         name="task_id"
                                         value={formData.id}
                                         onChange={handleChange}
                                         className="task-input"
-                                        placeholder='eg: TS-1'
+                                        placeholder='Task ID'
                                     />
                                 </div>
                                 <div className='flex flex-col'>
-                                    <label htmlFor="name">Task Name</label>
+                                    {/* <label htmlFor="name">Task Name</label> */}
                                     <input
                                         type="text"
                                         name="task_name"
                                         value={formData.name}
                                         onChange={handleChange}
                                         className="task-input"
-                                        placeholder='eg: Button'
+                                        placeholder='Task Name'
                                     />
                                 </div>
                             </div>
 
                             <div className='flex gap-5'>
                                 <div className='flex flex-col'>
-                                    <label htmlFor="deadline">Deadline</label>
+                                    {/* <label htmlFor="deadline">Deadline</label> */}
                                     <input
                                         type="date"
                                         name="deadline"
@@ -136,7 +138,7 @@ function Body() {
                                     />
                                 </div>
                                 <div className='flex flex-col w-full'>
-                                    <label htmlFor="assign">Assign To</label>
+                                    {/* <label htmlFor="assign">Assign To</label> */}
                                     <select
                                         className='task-input'
                                         name='assign'
@@ -154,14 +156,14 @@ function Body() {
                             </div>
 
                             <div className='flex flex-col'>
-                                <label htmlFor="Description">Description</label>
+                                {/* <label htmlFor="Description">Description</label> */}
                                 <textarea
                                     className='task-input'
                                     rows={4}
                                     name="description"
                                     value={formData.description}
                                     onChange={handleChange}
-                                    placeholder='description'
+                                    placeholder='Description'
                                 ></textarea>
                             </div>
                             <button type="submit" className='button'>Add&nbsp;Task</button>

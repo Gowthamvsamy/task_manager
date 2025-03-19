@@ -1,10 +1,13 @@
 import React, { useEffect, useReducer, useState } from 'react'
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { useTheme } from '../context/themeContext'
 import axios from 'axios';
-import rightArrow from '../assets/rightAr.png'
 import { toast } from 'react-toastify';
 import EditForm from './editForm';
-import edit from '../assets/edit-icon.png'
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { BiSolidEdit } from "react-icons/bi";
+import { GoArrowRight } from "react-icons/go";
+
 
 // Initial state
 const initialState = "Todo";
@@ -26,7 +29,7 @@ const reducer = (status, action) => {
 
 function TaskList({ searchValue }) {
 
-    const { open } = useTheme();
+    const { open, setOpen, theme } = useTheme();
 
     const [taskData, setTaskData] = useState([]);
     const [editlist, setEditlist] = useState();
@@ -95,6 +98,11 @@ function TaskList({ searchValue }) {
         setEditForm(true)
     }
 
+    // Open Add Task form
+    const openForm = () => {
+        setOpen(true);
+    }
+
     return (
         <>
             <div className='task'>
@@ -104,24 +112,41 @@ function TaskList({ searchValue }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
-                            <div key={task.task_id} className='task-item '>
+                            <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
                                     <div className='flex gap-2'>
-                                        <button onClick={() => viewEdite(task)}>
-                                            <img src={edit} alt="404" className='w-[19px]' />
-                                        </button>
-                                        <button onClick={() => {
-                                            moveToInProgress(task._id, "In Progress")
-                                            dispatchStatus({ type: "In Progress" })
-                                        }}>
-                                            <img src={rightArrow} alt="404" className='w-5' />
-                                        </button>
+                                        <Menu as="div" className="relative inline-block text-left">
+                                            <div>
+                                                <MenuButton className="menuButton">
+                                                    <BsThreeDotsVertical className='text-xl cursor-pointer' />
+                                                </MenuButton>
+                                            </div>
+                                            <MenuItems transition className="meniItems">
+                                                <div className=' flex flex-col gap-y-2 py-2'>
+                                                    <MenuItem>
+                                                        <button onClick={() => viewEdite(task)} className='menuItem'>
+                                                            <BiSolidEdit />
+                                                            <p className=''>Edit</p>
+                                                        </button>
+                                                    </MenuItem>
+                                                    <MenuItem>
+                                                        <button onClick={() => {
+                                                            moveToInProgress(task._id, "In Progress")
+                                                            dispatchStatus({ type: "In Progress" })
+                                                        }} className='menuItem'>
+                                                            <GoArrowRight />
+                                                            <p>Move</p>
+                                                        </button>
+                                                    </MenuItem>
+                                                </div>
+                                            </MenuItems>
+                                        </Menu>
                                     </div>
                                 </div>
-                                <div className='my-3'>{task.description}</div>
+                                <div className='mb-3'>{task.description}</div>
                                 <div className='flex justify-between '>
-                                    <div>{task.deadline}</div>
+                                    <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
@@ -130,6 +155,9 @@ function TaskList({ searchValue }) {
                             </div>
                         ))
                     }
+                    <div className='task-footer' onClick={openForm}>
+                        <button >+ New Task</button>
+                    </div>
                 </div>
                 <div className='task-list'>
                     <div className='task-heading progress'>
@@ -137,25 +165,41 @@ function TaskList({ searchValue }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
-                            <div key={task.task_id} className='task-item '>
+                            <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
                                     <div className='flex gap-2'>
-                                        <button onClick={() => viewEdite(task)}>
-                                            <img src={edit} alt="404" className='w-[19px]' />
-                                        </button>
-                                        <button onClick={() => {
-                                            moveToInProgress(task._id, "Done")
-                                            dispatchStatus({ type: "Done" })
-                                        }}>
-                                            <img src={rightArrow} alt="404" className='w-5' />
-                                        </button>
+                                    <Menu as="div" className="relative inline-block text-left">
+                                            <div>
+                                                <MenuButton className="menuButton">
+                                                    <BsThreeDotsVertical className='text-xl cursor-pointer' />
+                                                </MenuButton>
+                                            </div>
+                                            <MenuItems transition className="meniItems">
+                                                <div className=' flex flex-col gap-y-2 py-2'>
+                                                    <MenuItem>
+                                                        <button onClick={() => viewEdite(task)} className='menuItem'>
+                                                            <BiSolidEdit />
+                                                            <p className=''>Edit</p>
+                                                        </button>
+                                                    </MenuItem>
+                                                    <MenuItem>
+                                                        <button onClick={() => {
+                                                            moveToInProgress(task._id, "Done")
+                                                            dispatchStatus({ type: "Done" })
+                                                        }} className='menuItem'>
+                                                            <GoArrowRight />
+                                                            <p>Move</p>
+                                                        </button>
+                                                    </MenuItem>
+                                                </div>
+                                            </MenuItems>
+                                        </Menu>
                                     </div>
-
                                 </div>
-                                <div className='my-3'>{task.description}</div>
+                                <div className='mb-3'>{task.description}</div>
                                 <div className='flex justify-between '>
-                                    <div>{task.deadline}</div>
+                                    <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
@@ -171,16 +215,31 @@ function TaskList({ searchValue }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
-                            <div key={task.task_id} className='task-item '>
+                            <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
                                     <p>{task.task_name}</p>
-                                    <button onClick={() => viewEdite(task)}>
-                                        <img src={edit} alt="404" className='w-[19px]' />
-                                    </button>
+                                    
+                                    <Menu as="div" className="relative inline-block text-left">
+                                            <div>
+                                                <MenuButton className="menuButton">
+                                                    <BsThreeDotsVertical className='text-xl cursor-pointer' />
+                                                </MenuButton>
+                                            </div>
+                                            <MenuItems transition className="meniItems">
+                                                <div className=' flex flex-col gap-y-2 py-2'>
+                                                    <MenuItem>
+                                                        <button onClick={() => viewEdite(task)} className='menuItem'>
+                                                            <BiSolidEdit />
+                                                            <p className=''>Edit</p>
+                                                        </button>
+                                                    </MenuItem>
+                                                </div>
+                                            </MenuItems>
+                                        </Menu>
                                 </div>
-                                <div className='my-3'>{task.description}</div>
+                                <div className='mb-3'>{task.description}</div>
                                 <div className='flex justify-between '>
-                                    <div>{task.deadline}</div>
+                                    <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>

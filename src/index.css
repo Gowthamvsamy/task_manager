@@ -8,19 +8,19 @@
 }
 
 .search-box {
-  @apply border-none outline-none w-full bg-transparent
+  @apply border-none outline-none w-full bg-transparent placeholder:text-sm
 }
 
 .button {
-  @apply px-3 text-white text-sm bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 rounded-md
+  @apply px-3 text-white py-2 bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 rounded-md
 }
 
 .theme-box {
-  @apply shadow-md rounded-md p-2 h-fit 
+  @apply shadow-md rounded-md p-2 h-fit
 }
 
 .task-input {
-  @apply border rounded border-black px-2 py-1 w-full
+  @apply border rounded-md border-gray-400/75 px-2 py-1 w-full
 }
 
 .task {
@@ -28,15 +28,19 @@
 }
 
 .task-list {
-  @apply  h-[450px] w-full p-4 overflow-auto flex flex-col gap-y-3
+  @apply h-[500px] w-full p-4 overflow-auto flex flex-col gap-y-3
 }
 
-.task-heading{
+.task-heading {
   @apply shadow-md rounded bg-white/50 py-1 px-2 border-t-4
 }
 
+.task-footer{
+  @apply shadow-md rounded bg-white/50 py-1 px-2 flex justify-center items-center text-gray-700/75 font-semibold cursor-pointer
+}
+
 .task-item {
-  @apply bg-white py-2 px-3 border-2 rounded-md shadow-md cursor-pointer hover:scale-105
+  @apply py-2 px-3 border-2 rounded-md shadow-md
 }
 
 .task-list>.todo {
@@ -52,7 +56,7 @@
 }
 
 .edit-form {
-  @apply  bg-white/80 flex justify-center items-center top-0 absolute
+  @apply flex justify-center items-center top-0 absolute
 }
 
 .edit-form {
@@ -60,7 +64,7 @@
 }
 
 .formBg {
-  @apply bg-white p-10 border rounded shadow-lg
+  @apply bg-white p-10 border rounded-md shadow-lg
 }
 
 .formClose {
@@ -68,13 +72,47 @@
 }
 
 .searchBox {
-  @apply flex items-center ps-2 shadow-lg rounded-md w-full bg-gray-50/20 
+  @apply flex items-center ps-2 shadow-lg rounded-md w-full bg-gray-50/20 h-8
 }
 
 .navbar {
-  @apply flex justify-between items-center shadow-md px-10
+  @apply flex justify-between items-center shadow-md px-10 h-16
 }
 
-.navContent{
+.navContent {
   @apply flex gap-2 justify-center items-center
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.dropbox {
+  @apply p-2 shadow-md flex flex-col gap-2 absolute z-10
+}
+
+.menuItem {
+  @apply pe-5 flex gap-2 justify-center items-center text-blue-500 focus:text-blue-800 hover:text-blue-800
+}
+
+.menuButton{
+  @apply inline-flex w-full justify-center gap-x-1.5 px-3 py-2
+}
+
+.meniItems{
+  @apply absolute right-0 z-10 mt-2 w-28 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in
 }

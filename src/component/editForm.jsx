@@ -2,11 +2,15 @@ import React, { useState } from 'react'
 import close from '../assets/close.png'
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useTheme } from '../context/themeContext';
 
 
 function EditForm({ task, onClose, setUpdated }) {
 
     const [updatedTask, setUpdatedTask] = useState(task);
+
+    // use context
+        const { theme } = useTheme();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -38,7 +42,7 @@ function EditForm({ task, onClose, setUpdated }) {
 
     return (
         <>
-            <div className='edit-form h-[96%] w-[96%]'>
+            <div className={`edit-form h-[96%] w-[96%] ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
                 <div className='formBg'>
                     <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
                         <button className='formClose' onClick={() => onClose(false)} >
