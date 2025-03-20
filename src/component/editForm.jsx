@@ -3,6 +3,8 @@ import close from '../assets/close.png'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useTheme } from '../context/themeContext';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 function EditForm({ task, onClose, setUpdated }) {
@@ -10,7 +12,7 @@ function EditForm({ task, onClose, setUpdated }) {
     const [updatedTask, setUpdatedTask] = useState(task);
 
     // use context
-        const { theme } = useTheme();
+    const { theme } = useTheme();
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -38,19 +40,19 @@ function EditForm({ task, onClose, setUpdated }) {
         }
     };
 
-    
+
 
     return (
         <>
             <div className={`edit-form h-[96%] w-[96%] ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
                 <div className='formBg'>
-                    <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
+                    <form className='form-div gap-5' onSubmit={handleSubmit}>
                         <button className='formClose' onClick={() => onClose(false)} >
                             <img src={close} alt="404" className='w-6' />
                         </button>
+                        <p className='form-title'>Edit Task Form</p>
                         <div className='flex gap-5'>
-                            <div className='flex flex-col'>
-                                <label htmlFor="id">Task ID</label>
+                            <div className='form-div'>
                                 <input
                                     type="text"
                                     name="task_id"
@@ -59,8 +61,7 @@ function EditForm({ task, onClose, setUpdated }) {
                                     disabled
                                 />
                             </div>
-                            <div className='flex flex-col'>
-                                <label htmlFor="name">Task Name</label>
+                            <div className='form-div'>
                                 <input
                                     type="text"
                                     name="task_name"
@@ -72,24 +73,23 @@ function EditForm({ task, onClose, setUpdated }) {
                         </div>
 
                         <div className='flex gap-5'>
-                            <div className='flex flex-col'>
-                                <label htmlFor="deadline">Deadline</label>
-                                <input
-                                    type="date"
-                                    name="deadline"
-                                    value={updatedTask.deadline}
+                            <div className='form-div'>
+                                <DatePicker
+                                    selected={updatedTask.deadline ? new Date(updatedTask.deadline) : null}
+                                    dateFormat="yyyy-MM-dd"
                                     onChange={handleChange}
-                                    className='task-input' />
+                                    className="placeholder:pl-6 task-input"
+                                    minDate={new Date()}
+                                />
                             </div>
-                            <div className='flex flex-col w-full'>
-                                <label htmlFor="assign">Assign To</label>
+                            <div className='form-div w-[48%]'>
                                 <select
                                     className='task-input'
                                     name='assign'
                                     value={updatedTask.assign}
                                     onChange={handleChange}
                                 >
-                                    <option value="">Select an Employe</option>
+                                    <option value="" disabled>Select an Employe</option>
                                     <option value="employe1">Employer 1</option>
                                     <option value="employe2">Employer 2</option>
                                     <option value="employe3">Employer 3</option>
@@ -97,23 +97,23 @@ function EditForm({ task, onClose, setUpdated }) {
                                     <option value="employe5">Employer 5</option>
                                 </select>
                             </div>
-                            <div className='flex flex-col w-full'>
-                                <label htmlFor="status">Status</label>
+                        </div>
+                        <div className='flex gap-5'>
+                            <div className='form-div w-full'>
                                 <select
                                     className='task-input'
                                     name='status'
                                     value={updatedTask.status}
                                     onChange={handleChange}
                                 >
-                                    <option value="Todo">Todo</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="Done">Done</option>
+                                    <option className='bg-amber-500/50' value="Todo">Todo</option>
+                                    <option className='bg-blue-700/50' value="In Progress">In Progress</option>
+                                    <option className='bg-green-600/50' value="Done">Done</option>
                                 </select>
                             </div>
                         </div>
 
-                        <div className='flex flex-col'>
-                            <label htmlFor="Description">Description</label>
+                        <div className='form-div'>
                             <textarea
                                 className='task-input'
                                 rows={4}

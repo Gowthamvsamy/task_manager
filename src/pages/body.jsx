@@ -8,19 +8,24 @@ import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios';
 import close from '../assets/close.png';
 import logo from '../assets/logo.png'
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { MdCalendarToday } from 'react-icons/md';
+import Filter from '../component/filter';
 
 
 function Body() {
 
     const [searchValue, setSearchValue] = useState("");
+    const [filterValue, setFilterValue] = useState("");
 
     // use context
     const { theme, toggleTheme, open, setOpen } = useTheme();
 
     // Open Add Task form
-    // const openForm = () => {
-    //     setOpen(true);
-    // }
+    const openForm = () => {
+        setOpen(true);
+    }
 
     // Form Data
     const [formData, setFormData] = useState({
@@ -29,6 +34,7 @@ function Body() {
         deadline: '',
         assign: '',
         description: '',
+        priority: '',
         status: 'Todo',
     });
 
@@ -36,6 +42,12 @@ function Body() {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
+    const handleDateChange = (date) => {
+        setFormData({ ...formData, deadline: date });
+    };
+
+
 
     // Task creation
     const handleSubmit = (e) => {
@@ -64,6 +76,7 @@ function Body() {
             deadline: '',
             assign: '',
             description: '',
+            priority: '',
         });
 
         setOpen(false);
@@ -71,7 +84,7 @@ function Body() {
 
     return (
         <>
-            <div className={`h-screen ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
+            <div className={`h-screen relative ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
                 <ToastContainer />
                 <div className='navbar'>
                     <div className='navContent'>
@@ -82,14 +95,22 @@ function Body() {
                     <div className='navContent'>
                         <div className='my-6 flex gap-3'>
                             <Search setSearchValue={setSearchValue} />
-                            {/* <button className='button' onClick={openForm}>Add&nbsp;Task</button> */}
                         </div>
-                        <button onClick={toggleTheme} className={`theme-box ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white' />}</button>
+                        <div>
+                            <Filter setFilterValue={setFilterValue} />
+                        </div>
+                        <button onClick={toggleTheme} className={`theme-box group  ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white moon group-hover:text-gray-500' />}</button>
                     </div>
                 </div>
 
                 <div className='px-10'>
-                    <TaskList searchValue={searchValue} />
+                    <TaskList searchValue={searchValue}  filterValue={filterValue}/>
+                </div>
+                <div className='relative group'>
+                    <div className='extenal-addTask' onClick={openForm}>+</div>
+                    <span className="newTask">
+                        Add a new task
+                    </span>
                 </div>
             </div>
 
@@ -100,10 +121,9 @@ function Body() {
                             <button className='formClose' onClick={clearInput}>
                                 <img src={close} alt="404" className='w-6' />
                             </button>
-                            <p className='text-2xl font-semibold text-center -mt-3 mb-3'>Add Task Form</p>
+                            <p className='form-title'>Add Task Form</p>
                             <div className='flex gap-5'>
-                                <div className='flex flex-col'>
-                                    {/* <label htmlFor="id">Task ID</label> */}
+                                <div className='form-div'>
                                     <input
                                         type="text"
                                         name="task_id"
@@ -111,10 +131,10 @@ function Body() {
                                         onChange={handleChange}
                                         className="task-input"
                                         placeholder='Task ID'
+                                        required
                                     />
                                 </div>
-                                <div className='flex flex-col'>
-                                    {/* <label htmlFor="name">Task Name</label> */}
+                                <div className='form-div'>
                                     <input
                                         type="text"
                                         name="task_name"
@@ -122,30 +142,36 @@ function Body() {
                                         onChange={handleChange}
                                         className="task-input"
                                         placeholder='Task Name'
+                                        required
                                     />
                                 </div>
                             </div>
 
                             <div className='flex gap-5'>
-                                <div className='flex flex-col'>
-                                    {/* <label htmlFor="deadline">Deadline</label> */}
-                                    <input
-                                        type="date"
-                                        name="deadline"
-                                        value={formData.deadline}
-                                        onChange={handleChange}
-                                        className='task-input'
+                                <div className='form-div relative'>
+                                    <DatePicker
+                                        selected={formData.deadline ? new Date(formData.deadline) : null}
+                                        onChange={handleDateChange}
+                                        dateFormat="yyyy-MM-dd"
+                                        placeholderText="Select a date"
+                                        className="placeholder:pl-6 task-input"
+                                        minDate={new Date()}
+                                        isClearable
+                                        required
                                     />
+                                    {!formData.deadline && (
+                                        <MdCalendarToday className="datePicker-icon" />
+                                    )}
                                 </div>
-                                <div className='flex flex-col w-full'>
-                                    {/* <label htmlFor="assign">Assign To</label> */}
+                                <div className='form-div w-[48%]'>
                                     <select
-                                        className='task-input'
+                                        className={`task-input ${formData.assign ? 'text-black' : 'text-gray-400'}`}
                                         name='assign'
                                         value={formData.assign}
                                         onChange={handleChange}
+                                        required
                                     >
-                                        <option value="">Select an Employe</option>
+                                        <option value="" disabled>Select an Employe</option>
                                         <option value="employe1">Employer 1</option>
                                         <option value="employe2">Employer 2</option>
                                         <option value="employe3">Employer 3</option>
@@ -154,9 +180,21 @@ function Body() {
                                     </select>
                                 </div>
                             </div>
-
-                            <div className='flex flex-col'>
-                                {/* <label htmlFor="Description">Description</label> */}
+                            <div>
+                                <select
+                                    className={`task-input ${formData.priority ? 'text-black' : 'text-gray-400'}`}
+                                    name='priority'
+                                    value={formData.priority}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled>Select an priority</option>
+                                    <option className={`bg-green-500/90 text-white`} value="Low">Low</option>
+                                    <option className={`bg-yellow-500/90 text-gray-50 `} value="Medium">Medium</option>
+                                    <option className={`bg-red-500/90 text-gray-50 `} value="High">High</option>
+                                </select>
+                            </div>
+                            <div className='form-div'>
                                 <textarea
                                     className='task-input'
                                     rows={4}
@@ -164,6 +202,7 @@ function Body() {
                                     value={formData.description}
                                     onChange={handleChange}
                                     placeholder='Description'
+                                    required
                                 ></textarea>
                             </div>
                             <button type="submit" className='button'>Add&nbsp;Task</button>

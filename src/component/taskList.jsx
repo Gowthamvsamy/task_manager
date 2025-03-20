@@ -21,13 +21,11 @@ const reducer = (status, action) => {
             return "Done";
         case "DELETE":
             return " ";
-        // case "RSDONE":
-        //     return "In Progress";
     }
 }
 
 
-function TaskList({ searchValue }) {
+function TaskList({ searchValue, filterValue }) {
 
     const { open, setOpen, theme } = useTheme();
 
@@ -69,9 +67,17 @@ function TaskList({ searchValue }) {
 
     }, [Updated])
 
-    const filteredTasks = Array.isArray(taskData) ? taskData.filter((task) =>
-        task.task_name.toLowerCase().includes(searchValue.toLowerCase())
-    ) : [];
+    const filteredTasks = Array.isArray(taskData)
+    ? taskData
+        .filter((task) =>
+            (task?.task_name || "").toLowerCase().includes(searchValue.toLowerCase())
+        )
+        .filter((task) =>
+            filterValue.toLowerCase() === "all" || (task?.priority || "").toLowerCase().includes(filterValue.toLowerCase())
+        )
+    : [];
+
+    
 
     const moveToInProgress = (id, newStatus) => {
 
@@ -103,6 +109,7 @@ function TaskList({ searchValue }) {
         setOpen(true);
     }
 
+
     return (
         <>
             <div className='task'>
@@ -114,16 +121,16 @@ function TaskList({ searchValue }) {
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
-                                    <p>{task.task_name}</p>
+                                    <p className='card-title'>{task.task_name}</p>
                                     <div className='flex gap-2'>
-                                        <Menu as="div" className="relative inline-block text-left">
+                                        <Menu as="div" className="menuBox">
                                             <div>
                                                 <MenuButton className="menuButton">
                                                     <BsThreeDotsVertical className='text-xl cursor-pointer' />
                                                 </MenuButton>
                                             </div>
                                             <MenuItems transition className="meniItems">
-                                                <div className=' flex flex-col gap-y-2 py-2'>
+                                                <div className=' form-div gap-y-2 py-2'>
                                                     <MenuItem>
                                                         <button onClick={() => viewEdite(task)} className='menuItem'>
                                                             <BiSolidEdit />
@@ -148,6 +155,7 @@ function TaskList({ searchValue }) {
                                 <div className='flex justify-between '>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
+                                        <p className={`border p-1 h-3 w-3 my-auto rounded ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
@@ -161,22 +169,22 @@ function TaskList({ searchValue }) {
                 </div>
                 <div className='task-list'>
                     <div className='task-heading progress'>
-                        <p>In progress</p>
+                        <p>In Progress</p>
                     </div>
                     {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
-                                    <p>{task.task_name}</p>
+                                    <p className='card-title'>{task.task_name}</p>
                                     <div className='flex gap-2'>
-                                    <Menu as="div" className="relative inline-block text-left">
+                                        <Menu as="div" className="menuBox">
                                             <div>
                                                 <MenuButton className="menuButton">
                                                     <BsThreeDotsVertical className='text-xl cursor-pointer' />
                                                 </MenuButton>
                                             </div>
                                             <MenuItems transition className="meniItems">
-                                                <div className=' flex flex-col gap-y-2 py-2'>
+                                                <div className=' form-div gap-y-2 py-2'>
                                                     <MenuItem>
                                                         <button onClick={() => viewEdite(task)} className='menuItem'>
                                                             <BiSolidEdit />
@@ -201,6 +209,7 @@ function TaskList({ searchValue }) {
                                 <div className='flex justify-between '>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
+                                        <p className={`border p-1 h-3 w-3 my-auto rounded ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
@@ -217,30 +226,31 @@ function TaskList({ searchValue }) {
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
-                                    <p>{task.task_name}</p>
-                                    
-                                    <Menu as="div" className="relative inline-block text-left">
-                                            <div>
-                                                <MenuButton className="menuButton">
-                                                    <BsThreeDotsVertical className='text-xl cursor-pointer' />
-                                                </MenuButton>
+                                    <p className='card-title'>{task.task_name}</p>
+
+                                    <Menu as="div" className="menuBox">
+                                        <div>
+                                            <MenuButton className="menuButton">
+                                                <BsThreeDotsVertical className='text-xl cursor-pointer' />
+                                            </MenuButton>
+                                        </div>
+                                        <MenuItems transition className="meniItems">
+                                            <div className=' form-div gap-y-2 py-2'>
+                                                <MenuItem>
+                                                    <button onClick={() => viewEdite(task)} className='menuItem'>
+                                                        <BiSolidEdit />
+                                                        <p className=''>Edit</p>
+                                                    </button>
+                                                </MenuItem>
                                             </div>
-                                            <MenuItems transition className="meniItems">
-                                                <div className=' flex flex-col gap-y-2 py-2'>
-                                                    <MenuItem>
-                                                        <button onClick={() => viewEdite(task)} className='menuItem'>
-                                                            <BiSolidEdit />
-                                                            <p className=''>Edit</p>
-                                                        </button>
-                                                    </MenuItem>
-                                                </div>
-                                            </MenuItems>
-                                        </Menu>
+                                        </MenuItems>
+                                    </Menu>
                                 </div>
                                 <div className='mb-3'>{task.description}</div>
                                 <div className='flex justify-between '>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
+                                        <p className={`border p-1 h-3 w-3 my-auto rounded ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
