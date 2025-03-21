@@ -15,7 +15,7 @@
   @apply px-3 text-white py-2 bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 rounded-md
 }
 
-.theme-box { 
+.theme-box {
   @apply shadow-md rounded-md p-2 h-fit hover:bg-gray-50
 }
 
@@ -35,7 +35,7 @@
   @apply shadow-md rounded bg-white/50 py-1 px-2 border-t-4 text-lg font-semibold
 }
 
-.task-footer{
+.task-footer {
   @apply shadow-md rounded bg-white/50 py-1 px-2 flex justify-center items-center text-gray-700/75 font-semibold cursor-pointer
 }
 
@@ -109,11 +109,11 @@
   @apply pe-5 flex gap-2 justify-center items-center text-blue-500 focus:text-blue-800 hover:text-blue-800
 }
 
-.menuButton{
+.menuButton {
   @apply inline-flex w-full justify-center gap-x-1.5 px-3 py-2
 }
 
-.meniItems{
+.meniItems {
   @apply absolute right-0 z-10 mt-2 w-28 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in
 }
 
@@ -129,18 +129,38 @@
   @apply text-2xl font-semibold text-center -mt-3 mb-3
 }
 
-.card-title{
+.card-title {
   @apply capitalize font-semibold
 }
 
-.menuBox{
+.menuBox {
   @apply relative inline-block text-left
 }
 
-.extenal-addTask{
+.extenal-addTask {
   @apply border rounded-full h-14 w-14 bg-slate-50 absolute z-50 -bottom-2 left-6 text-gray-500 text-5xl text-center cursor-pointer group-hover:bg-gray-200
 }
 
 .newTask {
   @apply absolute -top-8 left-24 bg-gray-700 text-white text-xs rounded px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity
+}
+
+.autocomplete-input {
+  @apply w-full outline-none bg-transparent
+}
+
+.menuBoxdiv {
+  @apply text-gray-500 bg-gray-50/20
+}
+
+.filterMenu {
+  @apply block border-b w-full px-4 py-2 text-sm text-gray-700 data-[focus]:text-white data-[focus]:outline-none
+}
+
+.taskList-priority{
+  @apply border p-1 h-3 w-3 my-auto rounded
+}
+
+.moon{
+  @apply group-hover:text-gray-500
 }

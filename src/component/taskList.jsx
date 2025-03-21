@@ -27,8 +27,10 @@ const reducer = (status, action) => {
 
 function TaskList({ searchValue, filterValue }) {
 
+    // context
     const { open, setOpen, theme } = useTheme();
 
+    // state
     const [taskData, setTaskData] = useState([]);
     const [editlist, setEditlist] = useState();
     const [editForm, setEditForm] = useState(false);
@@ -37,6 +39,7 @@ function TaskList({ searchValue, filterValue }) {
     // useReducer Hook
     const [, dispatchStatus] = useReducer(reducer, initialState);
 
+    // get all data using API
     const getData = () => {
         axios.get("http://localhost:4000/task/all")
             .then(response => {
@@ -54,11 +57,12 @@ function TaskList({ searchValue, filterValue }) {
             });
     };
 
-
+    // useEffect for GET method
     useEffect(() => {
         getData()
     }, [open])
 
+    // useEffect for updated task
     useEffect(() => {
         if (Updated) {
             getData()
@@ -67,18 +71,18 @@ function TaskList({ searchValue, filterValue }) {
 
     }, [Updated])
 
+    // use to Search and Filter the task
     const filteredTasks = Array.isArray(taskData)
-    ? taskData
-        .filter((task) =>
-            (task?.task_name || "").toLowerCase().includes(searchValue.toLowerCase())
-        )
-        .filter((task) =>
-            filterValue.toLowerCase() === "all" || (task?.priority || "").toLowerCase().includes(filterValue.toLowerCase())
-        )
-    : [];
+        ? taskData
+            .filter((task) =>
+                (task?.task_name || "").toLowerCase().includes(searchValue.toLowerCase())
+            )
+            .filter((task) =>
+                filterValue.toLowerCase() === "all" || (task?.priority || "").toLowerCase().includes(filterValue.toLowerCase())
+            )
+        : [];
 
-    
-
+    // PATCH method for update taske
     const moveToInProgress = (id, newStatus) => {
 
         axios.patch(`http://localhost:4000/task/update/${id}`, { status: newStatus }, {
@@ -99,6 +103,7 @@ function TaskList({ searchValue, filterValue }) {
             });
     }
 
+    // Edit task function
     const viewEdite = (task) => {
         setEditlist(task)
         setEditForm(true)
@@ -113,6 +118,7 @@ function TaskList({ searchValue, filterValue }) {
     return (
         <>
             <div className='task'>
+                {/* Todo List */}
                 <div className='task-list'>
                     <div className='task-heading todo'>
                         <p>Todo</p>
@@ -155,7 +161,7 @@ function TaskList({ searchValue, filterValue }) {
                                 <div className='flex justify-between '>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
-                                        <p className={`border p-1 h-3 w-3 my-auto rounded ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
+                                        <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
@@ -167,6 +173,8 @@ function TaskList({ searchValue, filterValue }) {
                         <button >+ New Task</button>
                     </div>
                 </div>
+
+                {/* In Progress List */}
                 <div className='task-list'>
                     <div className='task-heading progress'>
                         <p>In Progress</p>
@@ -209,7 +217,7 @@ function TaskList({ searchValue, filterValue }) {
                                 <div className='flex justify-between '>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
-                                        <p className={`border p-1 h-3 w-3 my-auto rounded ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
+                                        <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
@@ -218,6 +226,8 @@ function TaskList({ searchValue, filterValue }) {
                         ))
                     }
                 </div>
+
+                {/* Done List */}
                 <div className='task-list'>
                     <div className='task-heading done'>
                         <p>Done</p>
@@ -250,7 +260,7 @@ function TaskList({ searchValue, filterValue }) {
                                 <div className='flex justify-between '>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
-                                        <p className={`border p-1 h-3 w-3 my-auto rounded ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
+                                        <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
                                         <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
@@ -260,6 +270,8 @@ function TaskList({ searchValue, filterValue }) {
                     }
                 </div>
             </div>
+
+            {/* Edit form call */}
             {editForm && (
                 <EditForm setUpdated={setUpdated} task={editlist} onClose={() => setEditForm(false)} />
             )}

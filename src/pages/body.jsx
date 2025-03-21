@@ -12,10 +12,14 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdCalendarToday } from 'react-icons/md';
 import Filter from '../component/filter';
+import items from '../component/employee.json'
+import { Autocomplete } from '@mui/material';
+
 
 
 function Body() {
 
+    // State
     const [searchValue, setSearchValue] = useState("");
     const [filterValue, setFilterValue] = useState("");
 
@@ -38,16 +42,16 @@ function Body() {
         status: 'Todo',
     });
 
+    // Listener for Form Data
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
+    // Listener for Date Picker
     const handleDateChange = (date) => {
         setFormData({ ...formData, deadline: date });
     };
-
-
 
     // Task creation
     const handleSubmit = (e) => {
@@ -84,6 +88,7 @@ function Body() {
 
     return (
         <>
+            {/* Body */}
             <div className={`h-screen relative ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
                 <ToastContainer />
                 <div className='navbar'>
@@ -99,12 +104,12 @@ function Body() {
                         <div>
                             <Filter setFilterValue={setFilterValue} />
                         </div>
-                        <button onClick={toggleTheme} className={`theme-box group  ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white moon group-hover:text-gray-500' />}</button>
+                        <button onClick={toggleTheme} className={`theme-box group  ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white moon' />}</button>
                     </div>
                 </div>
 
                 <div className='px-10'>
-                    <TaskList searchValue={searchValue}  filterValue={filterValue}/>
+                    <TaskList searchValue={searchValue} filterValue={filterValue} />
                 </div>
                 <div className='relative group'>
                     <div className='extenal-addTask' onClick={openForm}>+</div>
@@ -117,12 +122,13 @@ function Body() {
             {open ? (
                 <div className={`h-screen w-screen edit-form ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
                     <div className='formBg'>
-                        <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
+                        <form className='form-div gap-5' onSubmit={handleSubmit}>
                             <button className='formClose' onClick={clearInput}>
                                 <img src={close} alt="404" className='w-6' />
                             </button>
                             <p className='form-title'>Add Task Form</p>
                             <div className='flex gap-5'>
+                                {/* Task ID */}
                                 <div className='form-div'>
                                     <input
                                         type="text"
@@ -134,6 +140,7 @@ function Body() {
                                         required
                                     />
                                 </div>
+                                {/* Task Name */}
                                 <div className='form-div'>
                                     <input
                                         type="text"
@@ -148,6 +155,7 @@ function Body() {
                             </div>
 
                             <div className='flex gap-5'>
+                                {/* Date Picker */}
                                 <div className='form-div relative'>
                                     <DatePicker
                                         selected={formData.deadline ? new Date(formData.deadline) : null}
@@ -163,24 +171,50 @@ function Body() {
                                         <MdCalendarToday className="datePicker-icon" />
                                     )}
                                 </div>
+
+                                {/* Task assign to */}
                                 <div className='form-div w-[48%]'>
-                                    <select
+                                    {/* <select
                                         className={`task-input ${formData.assign ? 'text-black' : 'text-gray-400'}`}
                                         name='assign'
                                         value={formData.assign}
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="" disabled>Select an Employe</option>
-                                        <option value="employe1">Employer 1</option>
-                                        <option value="employe2">Employer 2</option>
-                                        <option value="employe3">Employer 3</option>
-                                        <option value="employe4">Employer 4</option>
-                                        <option value="employe5">Employer 5</option>
-                                    </select>
+                                        <option value="" disabled>Select an Employee</option>
+                                        <option value="employe1">Employee 1</option>
+                                        <option value="employe2">Employee 2</option>
+                                        <option value="employe3">Employee 3</option>
+                                        <option value="employe4">Employee 4</option>
+                                        <option value="employe5">Employee 5</option>
+                                    </select> */}
+
+                                    <Autocomplete
+                                        options={items}
+                                        getOptionLabel={(option) => option.label}
+                                        value={items.find((item) => item.label === formData.assign) || null}
+                                        onChange={(_, newValue) => {
+                                            setFormData({
+                                                ...formData,
+                                                assign: newValue ? newValue.label : ''
+                                            });
+                                        }}
+                                        renderInput={(params) => (
+                                            <div ref={params.InputProps.ref} className="task-input">
+                                                <input
+                                                    {...params.inputProps}
+                                                    placeholder="Select an Employee"
+                                                    className="autocomplete-input"
+                                                    required
+                                                />
+                                            </div>
+                                        )}
+                                    />
+
                                 </div>
                             </div>
                             <div>
+                                {/* Task Priority */}
                                 <select
                                     className={`task-input ${formData.priority ? 'text-black' : 'text-gray-400'}`}
                                     name='priority'
@@ -189,11 +223,12 @@ function Body() {
                                     required
                                 >
                                     <option value="" disabled>Select an priority</option>
-                                    <option className={`bg-green-500/90 text-white`} value="Low">Low</option>
-                                    <option className={`bg-yellow-500/90 text-gray-50 `} value="Medium">Medium</option>
-                                    <option className={`bg-red-500/90 text-gray-50 `} value="High">High</option>
+                                    <option className="text-black" value="Low">🟢 Low</option>
+                                    <option className="text-black" value="Medium">🟡 Medium</option>
+                                    <option className="text-black" value="High">🔴 High</option>
                                 </select>
                             </div>
+                            {/* Task Description */}
                             <div className='form-div'>
                                 <textarea
                                     className='task-input'

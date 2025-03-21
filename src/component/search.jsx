@@ -4,14 +4,17 @@ import { GoSearch } from "react-icons/go";
 
 function Search({ setSearchValue }) {
 
+  // Context
   const { theme } = useTheme();
 
+  // Search lisener
   const handleSearch = (e) => {
     setSearchValue(e.target.value);
   };
 
   return (
     <>
+    {/* Search Input */}
       <div className={`searchBox group ${theme ? "shadow-black" : "shadow-white"}`}>
         <input
           type="search"
