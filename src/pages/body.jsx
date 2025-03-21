@@ -22,6 +22,7 @@ function Body() {
     // State
     const [searchValue, setSearchValue] = useState("");
     const [filterValue, setFilterValue] = useState("");
+    const [errors, setErrors] = useState({});
 
     // use context
     const { theme, toggleTheme, open, setOpen } = useTheme();
@@ -53,9 +54,61 @@ function Body() {
         setFormData({ ...formData, deadline: date });
     };
 
+    // Clear form Input
+    const clearInput = () => {
+        setFormData({
+            task_id: '',
+            task_name: '',
+            deadline: '',
+            assign: '',
+            description: '',
+            priority: '',
+        });
+        setErrors({});
+        setOpen(false);
+    }
+
+    // Form validation
+    const validateForm = () => {
+        const newErrors = {};
+
+        if (!formData.task_id || formData.task_id.length < 3) {
+            newErrors.task_id = "Task ID must be at least 3 characters";
+        }
+
+        if (!formData.task_name || formData.task_name.length < 5) {
+            newErrors.task_name = "Task name must be at least 5 characters";
+        }
+
+        if (!formData.deadline) {
+            newErrors.deadline = "Please select a deadline";
+        }
+
+        if (!formData.assign) {
+            newErrors.assign = "Please assign an employee";
+        }
+
+        if (!formData.priority) {
+            newErrors.priority = "Please select a priority";
+        }
+
+        if (!formData.description || formData.description.length < 10) {
+            newErrors.description = "Description must be at least 10 characters";
+        }
+
+        setErrors(newErrors);
+
+        return Object.keys(newErrors).length === 0;
+    };
+
     // Task creation
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        if (!validateForm()) {
+            toast.error("Please fill all the fields correctly.");
+            return;
+        }
 
         axios.post("http://localhost:4000/task/add", formData, {
             headers: {
@@ -72,19 +125,8 @@ function Body() {
             });
     };
 
-    // Clear form Input
-    const clearInput = () => {
-        setFormData({
-            task_id: '',
-            task_name: '',
-            deadline: '',
-            assign: '',
-            description: '',
-            priority: '',
-        });
 
-        setOpen(false);
-    }
+
 
     return (
         <>
@@ -139,6 +181,7 @@ function Body() {
                                         placeholder='Task ID'
                                         required
                                     />
+                                    {errors.task_id && <span className="text-red-500 text-sm">{errors.task_id}</span>}
                                 </div>
                                 {/* Task Name */}
                                 <div className='form-div'>
@@ -151,6 +194,7 @@ function Body() {
                                         placeholder='Task Name'
                                         required
                                     />
+                                    {errors.task_name && <span className="text-red-500 text-sm">{errors.task_name}</span>}
                                 </div>
                             </div>
 
@@ -167,6 +211,7 @@ function Body() {
                                         isClearable
                                         required
                                     />
+                                    {errors.deadline && <span className="text-red-500 text-sm">{errors.deadline}</span>}
                                     {!formData.deadline && (
                                         <MdCalendarToday className="datePicker-icon" />
                                     )}
@@ -210,7 +255,7 @@ function Body() {
                                             </div>
                                         )}
                                     />
-
+                                    {errors.assign && <span className="text-red-500 text-sm">{errors.assign}</span>}
                                 </div>
                             </div>
                             <div>
@@ -227,6 +272,7 @@ function Body() {
                                     <option className="text-black" value="Medium">🟡 Medium</option>
                                     <option className="text-black" value="High">🔴 High</option>
                                 </select>
+                                {errors.priority && <span className="text-red-500 text-sm">{errors.priority}</span>}
                             </div>
                             {/* Task Description */}
                             <div className='form-div'>
@@ -239,6 +285,7 @@ function Body() {
                                     placeholder='Description'
                                     required
                                 ></textarea>
+                                {errors.description && <span className="text-red-500 text-sm">{errors.description}</span>}
                             </div>
                             <button type="submit" className='button'>Add&nbsp;Task</button>
                         </form>
