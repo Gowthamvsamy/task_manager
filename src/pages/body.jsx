@@ -24,14 +24,6 @@ function Body() {
     const [filterValue, setFilterValue] = useState("");
     const [errors, setErrors] = useState({});
 
-    // use context
-    const { theme, toggleTheme, open, setOpen } = useTheme();
-
-    // Open Add Task form
-    const openForm = () => {
-        setOpen(true);
-    }
-
     // Form Data
     const [formData, setFormData] = useState({
         task_id: '',
@@ -42,6 +34,14 @@ function Body() {
         priority: '',
         status: 'Todo',
     });
+
+    // use context
+    const { theme, toggleTheme, open, setOpen } = useTheme();
+
+    // Open Add Task form
+    const openForm = () => {
+        setOpen(true);
+    }
 
     // Listener for Form Data
     const handleChange = (e) => {
@@ -71,33 +71,16 @@ function Body() {
     // Form validation
     const validateForm = () => {
         const newErrors = {};
+        const { task_id, task_name, deadline, assign, priority, description } = formData;
 
-        if (!formData.task_id || formData.task_id.length < 3) {
-            newErrors.task_id = "Task ID must be at least 3 characters";
-        }
-
-        if (!formData.task_name || formData.task_name.length < 5) {
-            newErrors.task_name = "Task name must be at least 5 characters";
-        }
-
-        if (!formData.deadline) {
-            newErrors.deadline = "Please select a deadline";
-        }
-
-        if (!formData.assign) {
-            newErrors.assign = "Please assign an employee";
-        }
-
-        if (!formData.priority) {
-            newErrors.priority = "Please select a priority";
-        }
-
-        if (!formData.description || formData.description.length < 10) {
-            newErrors.description = "Description must be at least 10 characters";
-        }
+        if (task_id.length < 3) newErrors.task_id = "Task ID must be at least 3 characters";
+        if (task_name.length < 5) newErrors.task_name = "Task name must be at least 5 characters";
+        if (!deadline) newErrors.deadline = "Please select a deadline";
+        if (!assign) newErrors.assign = "Please assign an employee";
+        if (!priority) newErrors.priority = "Please select a priority";
+        if (description.length < 10) newErrors.description = "Description must be at least 10 characters";
 
         setErrors(newErrors);
-
         return Object.keys(newErrors).length === 0;
     };
 
@@ -124,9 +107,6 @@ function Body() {
                 toast.error(error.response?.data?.message || "Failed to add task");
             });
     };
-
-
-
 
     return (
         <>
@@ -219,21 +199,6 @@ function Body() {
 
                                 {/* Task assign to */}
                                 <div className='form-div w-[48%]'>
-                                    {/* <select
-                                        className={`task-input ${formData.assign ? 'text-black' : 'text-gray-400'}`}
-                                        name='assign'
-                                        value={formData.assign}
-                                        onChange={handleChange}
-                                        required
-                                    >
-                                        <option value="" disabled>Select an Employee</option>
-                                        <option value="employe1">Employee 1</option>
-                                        <option value="employe2">Employee 2</option>
-                                        <option value="employe3">Employee 3</option>
-                                        <option value="employe4">Employee 4</option>
-                                        <option value="employe5">Employee 5</option>
-                                    </select> */}
-
                                     <Autocomplete
                                         options={items}
                                         getOptionLabel={(option) => option.label}
@@ -268,9 +233,9 @@ function Body() {
                                     required
                                 >
                                     <option value="" disabled>Select an priority</option>
-                                    <option className="text-black" value="Low">🟢 Low</option>
-                                    <option className="text-black" value="Medium">🟡 Medium</option>
-                                    <option className="text-black" value="High">🔴 High</option>
+                                    <option value="Low">🟢 Low</option>
+                                    <option value="Medium">🟡 Medium</option>
+                                    <option value="High">🔴 High</option>
                                 </select>
                                 {errors.priority && <span className="text-red-500 text-sm">{errors.priority}</span>}
                             </div>

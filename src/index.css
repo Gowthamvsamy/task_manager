@@ -164,3 +164,7 @@
 .moon{
   @apply group-hover:text-gray-500
 }
+
+option {
+  @apply text-black
+}

@@ -13,16 +13,10 @@ import { GoArrowRight } from "react-icons/go";
 const initialState = "Todo";
 
 //Reducer function
-const reducer = (status, action) => {
-    switch (action.type) {
-        case "INPROGRESS":
-            return "In Progress";
-        case "DONE":
-            return "Done";
-        case "DELETE":
-            return " ";
-    }
-}
+const reducer = (state, action) => ({
+    "INPROGRESS": "In Progress",
+    "DONE": "Done"
+}[action.type] || state);
 
 
 function TaskList({ searchValue, filterValue }) {
@@ -42,17 +36,10 @@ function TaskList({ searchValue, filterValue }) {
     // get all data using API
     const getData = () => {
         axios.get("http://localhost:4000/task/all")
-            .then(response => {
 
-                if (response.data && Array.isArray(response.data.data)) {
-                    setTaskData(response.data.data);
-                } else {
-                    console.error("Unexpected response format:", response.data);
-                    setTaskData([]);
-                }
-            })
-            .catch(error => {
-                console.error("Fetch error:", error);
+            .then(({ data }) => setTaskData(data?.data || []))
+            .catch(() => {
+                toast.error("Failed to fetch tasks");
                 setTaskData([]);
             });
     };
@@ -94,8 +81,7 @@ function TaskList({ searchValue, filterValue }) {
                 toast.success("Task Updated Successfully");
                 dispatchStatus({ type: newStatus.toUpperCase().replace(" ", "") });
             })
-            .catch((error) => {
-                console.error("Error changing task:", error)
+            .catch(() => {
                 toast.error("Task Changing Error")
             })
             .finally(() => {

@@ -99,20 +99,6 @@ function EditForm({ task, onClose, setUpdated }) {
                             </div>
                             {/* Task assign to */}
                             <div className='form-div w-[48%]'>
-                                {/* <select
-                                    className='task-input'
-                                    name='assign'
-                                    value={updatedTask.assign}
-                                    onChange={handleChange}
-                                >
-                                    <option value="" disabled>Select an Employe</option>
-                                    <option value="employe1">Employer 1</option>
-                                    <option value="employe2">Employer 2</option>
-                                    <option value="employe3">Employer 3</option>
-                                    <option value="employe4">Employer 4</option>
-                                    <option value="employe5">Employer 5</option>
-                                </select> */}
-
                                 <Autocomplete
                                     options={items}
                                     getOptionLabel={(option) => option.label}
