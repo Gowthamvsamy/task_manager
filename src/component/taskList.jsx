@@ -71,11 +71,18 @@ function TaskList({ searchValue, filterValue }) {
             .filter((task) =>
                 (task?.task_name || "").toLowerCase().includes(searchValue.toLowerCase())
             )
-            .filter((task) =>
-                filterValue.toLowerCase() === "all" || (task?.priority || "").toLowerCase().includes(filterValue.toLowerCase())
-            )
+            .filter((task) => {
+                if (!Array.isArray(filterValue) || filterValue.includes("All")) {
+                    return true; 
+                }
+    
+                // Check if task priority matches any selected filters
+                return filterValue.some((value) => 
+                    (task?.priority || "").toLowerCase().includes(value.toLowerCase())
+                );
+            })
         : [];
-
+    
     // Move task to In Progress or Done
     const moveToInProgress = (id, newStatus) => {
         updateTaskMutation.mutate({ id, newStatus });
@@ -112,7 +119,7 @@ function TaskList({ searchValue, filterValue }) {
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
-                                    <p className='card-title'>{task.task_name}</p>
+                                    <p className='card-title'>{task.task_id} : {task.task_name}</p>
                                     <div className='flex gap-2'>
                                         <Menu as="div" className="menuBox">
                                             <div>
@@ -147,7 +154,6 @@ function TaskList({ searchValue, filterValue }) {
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
                                         <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
-                                        <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
                                 </div>
@@ -168,7 +174,7 @@ function TaskList({ searchValue, filterValue }) {
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
-                                    <p className='card-title'>{task.task_name}</p>
+                                    <p className='card-title'>{task.task_id} : {task.task_name}</p>
                                     <div className='flex gap-2'>
                                         <Menu as="div" className="menuBox">
                                             <div>
@@ -203,7 +209,6 @@ function TaskList({ searchValue, filterValue }) {
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
                                         <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
-                                        <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
                                 </div>
@@ -221,7 +226,7 @@ function TaskList({ searchValue, filterValue }) {
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
-                                    <p className='card-title'>{task.task_name}</p>
+                                    <p className='card-title'>{task.task_id} : {task.task_name}</p>
 
                                     <Menu as="div" className="menuBox">
                                         <div>
@@ -246,7 +251,6 @@ function TaskList({ searchValue, filterValue }) {
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
                                     <div className='flex gap-3'>
                                         <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
-                                        <p>{task.task_id}</p>
                                         <p>{task.assign}</p>
                                     </div>
                                 </div>
