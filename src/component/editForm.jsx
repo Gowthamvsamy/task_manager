@@ -1,13 +1,13 @@
 // import
 import React, { useState } from 'react'
 import close from '../assets/close.png'
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useTheme } from '../context/themeContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Autocomplete } from '@mui/material';
 import items from '../component/employee.json';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 function EditForm({ task, onClose, setUpdated }) {
@@ -17,6 +17,29 @@ function EditForm({ task, onClose, setUpdated }) {
 
     // use context
     const { theme } = useTheme();
+
+    // React Query Client
+    const queryClient = useQueryClient()
+
+    // Mutation for updating task
+    const updateTaskMutation = useMutation({
+        mutationFn: (updatedTask) =>
+            fetch(`http://localhost:4000/task/update/${updatedTask._id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedTask)
+            }),
+        onSuccess: () => {
+            toast.success("Task updated successfully")
+            queryClient.invalidateQueries(['tasks'])  // Refetch tasks after update
+            onClose(false)
+            setUpdated(true)
+        },
+        onError: () => {
+            toast.error("Failed to update task")
+        }
+    })
+
 
     // Input listener
     const handleChange = (event) => {
@@ -41,16 +64,7 @@ function EditForm({ task, onClose, setUpdated }) {
 
         const isConfirmed = window.confirm("Are you sure you want to update this task?");
         if (isConfirmed) {
-            axios.patch(`http://localhost:4000/task/update/${updatedTask._id}`, updatedTask)
-                .then(() => {
-                    toast.success("Task updated successfully");
-                    onClose(false);
-                    setUpdated(true)
-                })
-                .catch((error) => {
-                    console.error("Error updating task:", error);
-                    toast.error("Failed to update task");
-                });
+            updateTaskMutation.mutate(updatedTask)
         }
     };
 

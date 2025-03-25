@@ -5,7 +5,6 @@ import { GoSun, GoMoon } from "react-icons/go";
 import { useTheme } from '../context/themeContext';
 import TaskList from '../component/taskList';
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios';
 import close from '../assets/close.png';
 import logo from '../assets/logo.png'
 import DatePicker from 'react-datepicker';
@@ -14,6 +13,7 @@ import { MdCalendarToday } from 'react-icons/md';
 import Filter from '../component/filter';
 import items from '../component/employee.json'
 import { Autocomplete } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 
 
@@ -38,35 +38,8 @@ function Body() {
     // use context
     const { theme, toggleTheme, open, setOpen } = useTheme();
 
-    // Open Add Task form
-    const openForm = () => {
-        setOpen(true);
-    }
-
-    // Listener for Form Data
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    // Listener for Date Picker
-    const handleDateChange = (date) => {
-        setFormData({ ...formData, deadline: date });
-    };
-
-    // Clear form Input
-    const clearInput = () => {
-        setFormData({
-            task_id: '',
-            task_name: '',
-            deadline: '',
-            assign: '',
-            description: '',
-            priority: '',
-        });
-        setErrors({});
-        setOpen(false);
-    }
+    // React Query Client
+    const queryClient = useQueryClient();
 
     // Form validation
     const validateForm = () => {
@@ -84,6 +57,55 @@ function Body() {
         return Object.keys(newErrors).length === 0;
     };
 
+    // React Query Mutation for Adding Task
+    const addTaskMutation = useMutation({
+        mutationFn: (newTask) => 
+            fetch("http://localhost:4000/task/add", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newTask)
+            }),
+            onSuccess: () => {
+                toast.success("Task added successfully");
+                clearInput();
+                queryClient.invalidateQueries(['tasks']);
+            },
+            onError: (error) => {
+                console.error("Error submitting form:", error);
+                toast.error("Failed to add task");
+            }
+    });
+
+    // Clear form Input
+    const clearInput = () => {
+        setFormData({
+            task_id: '',
+            task_name: '',
+            deadline: '',
+            assign: '',
+            description: '',
+            priority: '',
+        });
+        setErrors({});
+        setOpen(false);
+    }
+
+    // Open Add Task form
+    const openForm = () => {
+        setOpen(true);
+    }
+
+    // Listener for Form Data
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    // Listener for Date Picker
+    const handleDateChange = (date) => {
+        setFormData({ ...formData, deadline: date });
+    };
+
     // Task creation
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -93,19 +115,7 @@ function Body() {
             return;
         }
 
-        axios.post("http://localhost:4000/task/add", formData, {
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then(() => {
-                toast.success("Task added successfully");
-                clearInput();
-            })
-            .catch((error) => {
-                console.error("Error submitting form:", error);
-                toast.error(error.response?.data?.message || "Failed to add task");
-            });
+        addTaskMutation.mutate(formData);
     };
 
     return (

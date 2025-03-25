@@ -1,12 +1,12 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { useTheme } from '../context/themeContext'
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import EditForm from './editForm';
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { BiSolidEdit } from "react-icons/bi";
 import { GoArrowRight } from "react-icons/go";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 // Initial state
@@ -25,7 +25,6 @@ function TaskList({ searchValue, filterValue }) {
     const { open, setOpen, theme } = useTheme();
 
     // state
-    const [taskData, setTaskData] = useState([]);
     const [editlist, setEditlist] = useState();
     const [editForm, setEditForm] = useState(false);
     const [Updated, setUpdated] = useState(false)
@@ -33,30 +32,38 @@ function TaskList({ searchValue, filterValue }) {
     // useReducer Hook
     const [, dispatchStatus] = useReducer(reducer, initialState);
 
+    // React Query Client
+    const queryClient = useQueryClient();
+
     // get all data using API
-    const getData = () => {
-        axios.get("http://localhost:4000/task/all")
+    const { data: taskData = [], refetch } = useQuery({
+        queryKey: ['tasks'],
+        queryFn: () =>
+            fetch("http://localhost:4000/task/all")
+                .then(res => res.json())
+                .then(data => data?.data || [])
+                .catch(() => {
+                    toast.error("Failed to fetch tasks");
+                    return [];
+                })
+    });
 
-            .then(({ data }) => setTaskData(data?.data || []))
-            .catch(() => {
-                toast.error("Failed to fetch tasks");
-                setTaskData([]);
-            });
-    };
-
-    // useEffect for GET method
-    useEffect(() => {
-        getData()
-    }, [open])
-
-    // useEffect for updated task
-    useEffect(() => {
-        if (Updated) {
-            getData()
-            setUpdated(false)
+    // Mutation for updating task status
+    const updateTaskMutation = useMutation({
+        mutationFn: ({ id, newStatus }) =>
+            fetch(`http://localhost:4000/task/update/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: newStatus })
+            }),
+        onSuccess: () => {
+            toast.success("Task Updated Successfully");
+            queryClient.invalidateQueries(['tasks']);
+        },
+        onError: () => {
+            toast.error("Task Changing Error");
         }
-
-    }, [Updated])
+    });
 
     // use to Search and Filter the task
     const filteredTasks = Array.isArray(taskData)
@@ -69,25 +76,11 @@ function TaskList({ searchValue, filterValue }) {
             )
         : [];
 
-    // PATCH method for update taske
+    // Move task to In Progress or Done
     const moveToInProgress = (id, newStatus) => {
-
-        axios.patch(`http://localhost:4000/task/update/${id}`, { status: newStatus }, {
-            headers: {
-                "content-Type": "application/json",
-            },
-        })
-            .then(() => {
-                toast.success("Task Updated Successfully");
-                dispatchStatus({ type: newStatus.toUpperCase().replace(" ", "") });
-            })
-            .catch(() => {
-                toast.error("Task Changing Error")
-            })
-            .finally(() => {
-                getData()
-            });
-    }
+        updateTaskMutation.mutate({ id, newStatus });
+        dispatchStatus({ type: newStatus.toUpperCase().replace(" ", "") });
+    };
 
     // Edit task function
     const viewEdite = (task) => {
@@ -100,6 +93,12 @@ function TaskList({ searchValue, filterValue }) {
         setOpen(true);
     }
 
+     // Refetch tasks when opening the form
+     useEffect(() => {
+        if (open) {
+            refetch();
+        }
+    }, [open, refetch]);
 
     return (
         <>
