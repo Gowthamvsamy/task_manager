@@ -24,7 +24,7 @@ function EditForm({ task, onClose, setUpdated }) {
     // Mutation for updating task
     const updateTaskMutation = useMutation({
         mutationFn: (updatedTask) =>
-            fetch(`http://localhost:4000/task/update/${updatedTask._id}`, {
+            fetch(`http://localhost:5000/task/update/${updatedTask._id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedTask)

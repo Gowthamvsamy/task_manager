@@ -39,7 +39,7 @@ function TaskList({ searchValue, filterValue }) {
     const { data: taskData = [], refetch } = useQuery({
         queryKey: ['tasks'],
         queryFn: () =>
-            fetch("http://localhost:4000/task/all")
+            fetch("http://localhost:5000/task/all")
                 .then(res => res.json())
                 .then(data => data?.data || [])
                 .catch(() => {
@@ -51,7 +51,7 @@ function TaskList({ searchValue, filterValue }) {
     // Mutation for updating task status
     const updateTaskMutation = useMutation({
         mutationFn: ({ id, newStatus }) =>
-            fetch(`http://localhost:4000/task/update/${id}`, {
+            fetch(`http://localhost:5000/task/update/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus })

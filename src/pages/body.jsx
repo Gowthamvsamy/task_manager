@@ -60,7 +60,7 @@ function Body() {
     // React Query Mutation for Adding Task
     const addTaskMutation = useMutation({
         mutationFn: (newTask) => 
-            fetch("http://localhost:4000/task/add", {
+            fetch("http://localhost:5000/task/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newTask)
