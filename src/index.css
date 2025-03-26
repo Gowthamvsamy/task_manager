@@ -168,3 +168,14 @@
 option {
   @apply text-black
 }
+
+/* .searchWrapper{
+  @apply !border-none !p-0 !m-0 !w-[220px]
+}
+
+.multiSelectContainer input {
+  @apply !mt-0 !bg-[#EAE9DF] 
+}
+ */
+
+ 
