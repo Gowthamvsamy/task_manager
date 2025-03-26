@@ -18,6 +18,7 @@
     "@tanstack/react-query-devtools": "^5.69.0",
     "date-fns": "^4.1.0",
     "multiselect-react-dropdown": "^2.0.25",
+    "primereact": "^10.9.3",
     "react": "^19.0.0",
     "react-datepicker": "^8.2.1",
     "react-dom": "^19.0.0",

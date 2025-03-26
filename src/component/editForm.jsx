@@ -6,8 +6,7 @@ import { useTheme } from '../context/themeContext';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Autocomplete } from '@mui/material';
-import items from '../component/employee.json';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 function EditForm({ task, onClose, setUpdated }) {
@@ -68,6 +67,19 @@ function EditForm({ task, onClose, setUpdated }) {
         }
     };
 
+    // GET Employee list
+        const { data: empData = [] } = useQuery({
+            queryKey: ['employee'],
+            queryFn: () =>
+                fetch("http://localhost:5000/emp")
+                    .then(res => res.json())
+                    .then(data => data?.data || [])
+                    .catch(() => {
+                        toast.error("Failed to fetch Employee");
+                        return [];
+                    })
+        });
+
     return (
         <>
             <div className={`edit-form h-[96%] w-[96%] ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
@@ -114,9 +126,11 @@ function EditForm({ task, onClose, setUpdated }) {
                             {/* Task assign to */}
                             <div className='form-div w-[48%]'>
                                 <Autocomplete
-                                    options={items}
-                                    getOptionLabel={(option) => option.label}
-                                    value={items.find((item) => item.label === updatedTask.assign) || null}
+                                    options={empData.map((emp) => ({
+                                        label : emp.emp_name
+                                    }))}
+                                    getOptionLabel={(option) => option.label || ''}
+                                    value={updatedTask.assign ? { label: updatedTask.assign } : null}
                                     onChange={(_, newValue) => {
                                         setUpdatedTask((prevTask) => ({
                                             ...prevTask,
@@ -134,6 +148,7 @@ function EditForm({ task, onClose, setUpdated }) {
                                         </div>
                                     )}
                                 />
+                                {console.log("updatedTask", updatedTask)}
                             </div>
                         </div>
                         <div className='flex gap-5'>

@@ -35,7 +35,7 @@ function TaskList({ searchValue, filterValue }) {
     // React Query Client
     const queryClient = useQueryClient();
 
-    // get all data using API
+    // GET all data using API
     const { data: taskData = [], refetch } = useQuery({
         queryKey: ['tasks'],
         queryFn: () =>

@@ -11,9 +11,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdCalendarToday } from 'react-icons/md';
 import Filter from '../component/filter';
-import items from '../component/employee.json'
 import { Autocomplete } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import EmpFilter from '../component/empFilter';
 
 
 
@@ -59,21 +59,34 @@ function Body() {
 
     // React Query Mutation for Adding Task
     const addTaskMutation = useMutation({
-        mutationFn: (newTask) => 
+        mutationFn: (newTask) =>
             fetch("http://localhost:5000/task/add", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newTask)
             }),
-            onSuccess: () => {
-                toast.success("Task added successfully");
-                clearInput();
-                queryClient.invalidateQueries(['tasks']);
-            },
-            onError: (error) => {
-                console.error("Error submitting form:", error);
-                toast.error("Failed to add task");
-            }
+        onSuccess: () => {
+            toast.success("Task added successfully");
+            clearInput();
+            queryClient.invalidateQueries(['tasks']);
+        },
+        onError: (error) => {
+            console.error("Error submitting form:", error);
+            toast.error("Failed to add task");
+        }
+    });
+
+    // GET Employee list
+    const { data: empData = [] } = useQuery({
+        queryKey: ['employee'],
+        queryFn: () =>
+            fetch("http://localhost:5000/emp")
+                .then(res => res.json())
+                .then(data => data?.data || [])
+                .catch(() => {
+                    toast.error("Failed to fetch Employee");
+                    return [];
+                })
     });
 
     // Clear form Input
@@ -135,6 +148,9 @@ function Body() {
                         </div>
                         <div>
                             <Filter setFilterValue={setFilterValue} />
+                        </div>
+                        <div>
+                            <EmpFilter />
                         </div>
                         <button onClick={toggleTheme} className={`theme-box group  ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white moon' />}</button>
                     </div>
@@ -207,18 +223,21 @@ function Body() {
                                     )}
                                 </div>
 
+
                                 {/* Task assign to */}
                                 <div className='form-div w-[48%]'>
                                     <Autocomplete
-                                        options={items}
+                                        options={empData.map((emp) => ({
+                                            label: emp.emp_name
+                                        }))}
                                         getOptionLabel={(option) => option.label}
-                                        value={items.find((item) => item.label === formData.assign) || null}
                                         onChange={(_, newValue) => {
                                             setFormData({
                                                 ...formData,
                                                 assign: newValue ? newValue.label : ''
                                             });
                                         }}
+
                                         renderInput={(params) => (
                                             <div ref={params.InputProps.ref} className="task-input">
                                                 <input
