@@ -1,13 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
-// import Multiselect from 'multiselect-react-dropdown';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import Select from 'react-select';
+import { useTheme } from '../context/themeContext';
 
-function EmpFilter() {
+function EmpFilter({ setEmpLabels }) {
 
     // State
     const [selectedEmp, setSelectedEmp] = useState([]);
+
+    const { theme } = useTheme();
 
     const MAX_SELECTION = 3;
 
@@ -24,69 +26,33 @@ function EmpFilter() {
                 })
     });
 
-    // // Handle Selection
-    // const handleSelect = (selectedList) => {
-    //     setSelectedEmp(selectedList);
-    //     console.log('Selected Employees:', selectedList);
-    // };
+    // Handle selection with max limit
+    const handleChange = (selectedOptions) => {
 
-    // const handleRemove = (selectedList) => {
-    //     setSelectedEmp(selectedList);
-    //     console.log('After Remove:', selectedList);
-    // };
+        const Emp = selectedOptions.map((emp) => emp.label)
 
-
-     // Handle selection with max limit
-     const handleChange = (selectedOptions) => {
         if (selectedOptions.length <= MAX_SELECTION) {
             setSelectedEmp(selectedOptions);
+            setEmpLabels(Emp);
         } else {
             toast.warn(`You can only select up to ${MAX_SELECTION} employees`);
         }
     };
 
-
     return (
-        // <div className='border-none w-full'>
-        //     <Multiselect
-        //         options={empData.map(emp => ({
-        //             id: emp.emp_id, 
-        //             name: emp.emp_name
-        //         }))}
-        //         selectedValues={selectedEmp}
-        //         onSelect={handleSelect}
-        //         onRemove={handleRemove}
-        //         displayValue="name"          // Display the selected names
-        //         placeholder="Select Employee"
-        //         className="w-full"
-        //         showCheckbox
-        //         closeIcon="circle" 
-        //         style={{
-        //             multiselectContainer: { color: '#374151' },  // Text color
-        //             chips: { background: '#3b82f6', color: '#fff' },  // Blue chips
-        //             searchBox: { 
-        //                 minHeight: '40px',
-        //                 border: '1px solid #d1d5db', 
-        //                 padding: '10px'
-        //             }
-        //         }}
-        //     />
-        // </div>
-
-
         <>
-            <div className='p-4'>
+            <div>
                 <Select
                     isMulti
                     name="employees"
                     options={empData.map(emp => ({
-                        value: emp.emp_id,    // Use value for ID
-                        label: emp.emp_name   // Use label for name display
+                        value: emp.emp_id, 
+                        label: emp.emp_name
                     }))}
                     value={selectedEmp}
                     onChange={handleChange}
-                    className="basic-multi-select"
-                    classNamePrefix="select "
+                    className={`basic-multi-select !rounded-md ${theme === 'light' ? 'bg-transparent' : 'bg-gray-50/20 light'}`}
+                    classNamePrefix="select"
                     placeholder="Select Employee"
                     maxMenuHeight={"200px"}
                 />

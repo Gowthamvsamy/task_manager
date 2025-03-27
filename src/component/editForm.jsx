@@ -82,7 +82,7 @@ function EditForm({ task, onClose, setUpdated }) {
 
     return (
         <>
-            <div className={`edit-form h-[96%] w-[96%] ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
+            <div className={`edit-form h-[96%] w-[96%] ${theme === 'light' ? 'bg-white/80' : 'bg-black/80'}`}>
                 <div className='formBg'>
                     <form className='form-div gap-5' onSubmit={handleSubmit}>
                         <button className='formClose' onClick={() => onClose(false)} >
@@ -124,7 +124,7 @@ function EditForm({ task, onClose, setUpdated }) {
                                 />
                             </div>
                             {/* Task assign to */}
-                            <div className='form-div w-[48%]'>
+                            <div className='form-div'>
                                 <Autocomplete
                                     options={empData.map((emp) => ({
                                         label : emp.emp_name
@@ -148,7 +148,6 @@ function EditForm({ task, onClose, setUpdated }) {
                                         </div>
                                     )}
                                 />
-                                {console.log("updatedTask", updatedTask)}
                             </div>
                         </div>
                         <div className='flex gap-5'>

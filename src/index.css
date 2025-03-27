@@ -8,7 +8,7 @@
 }
 
 .search-box {
-  @apply border-none outline-none w-full bg-transparent placeholder:text-sm
+  @apply border-none outline-none w-full bg-transparent
 }
 
 .button {
@@ -16,7 +16,7 @@
 }
 
 .theme-box {
-  @apply shadow-md rounded-md p-2 h-fit hover:bg-gray-50
+  @apply shadow-md rounded-md p-2.5 h-fit hover:bg-gray-50
 }
 
 .task-input {
@@ -72,7 +72,7 @@
 }
 
 .searchBox {
-  @apply flex items-center ps-2 shadow-md rounded-md w-full bg-gray-50/20 h-9 hover:bg-gray-50
+  @apply flex items-center ps-2 py-5 shadow-md rounded-md w-full bg-gray-50/20 h-9 hover:bg-gray-50
 }
 
 .navbar {
@@ -110,7 +110,7 @@
 }
 
 .menuButton {
-  @apply inline-flex w-full justify-end gap-x-1.5 px-3 py-2
+  @apply inline-flex w-full justify-end items-center gap-x-1.5 px-3 py-1
 }
 
 .meniItems {
@@ -162,7 +162,7 @@
 }
 
 .moon{
-  @apply group-hover:text-gray-500
+  @apply group-hover:text-gray-500 text-white hover:text-gray-500
 }
 
 option {
@@ -178,4 +178,34 @@ option {
 }
  */
 
- 
+.css-13cymwt-control {
+  @apply !border-0 !bg-transparent !rounded-md !shadow-md hover:!bg-gray-50 !text-gray-500 !w-full hover:!outline-none
+}
+
+.css-t3ipsp-control {
+  @apply !border-gray-100 !shadow-none
+}
+
+.light .select__placeholder {
+  color: #ffffff !important;
+}
+
+.light .select__value-container:hover .select__placeholder {
+  color: #6e6e6e !important;
+}
+
+.select__indicator-separator {
+  display: none;
+}
+
+.body-light{
+  @apply bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]
+}
+
+.body-dark{
+  @apply bg-gradient-to-bl from-[#635e57] to-[#697265]
+}
+
+.validation-error{
+  @apply text-red-500 text-sm
+}

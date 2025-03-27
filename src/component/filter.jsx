@@ -39,10 +39,10 @@ function Filter({ setFilterValue }) {
         <>
             <Menu as="div" className="menuBox">
                 {/* Filter Button */}
-                <div className='menuBoxdiv'>
-                    <MenuButton className={`menuButton rounded-md text-sm shadow-md hover:bg-gray-50 ${theme ? 'text-gray-500' : 'text-white hover:text-gray-500'}`}>
+                <div className='menuBoxdiv rounded-md shadow-md'>
+                    <MenuButton className={`menuButton  hover:bg-gray-50 ${theme === 'light' ? 'text-gray-500 rounded-md' : 'text-white hover:text-gray-500'}`}>
                         {selectedPriorities.length > 0 ? selectedPriorities.join(', ') : 'Priority'}
-                        <RiArrowDropDownLine aria-hidden="true" className="-mr-1 size-5" />
+                        <RiArrowDropDownLine aria-hidden="true" className={`-mr-1 size-8 ${theme === 'light' ? 'text-gray-400' : ''} `} />
                     </MenuButton>
                 </div>
 

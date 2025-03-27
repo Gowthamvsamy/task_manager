@@ -15,14 +15,13 @@ import { Autocomplete } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import EmpFilter from '../component/empFilter';
 
-
-
 function Body() {
 
     // State
     const [searchValue, setSearchValue] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [errors, setErrors] = useState({});
+    const [empLabels, setEmpLabels] = useState([]);
 
     // Form Data
     const [formData, setFormData] = useState({
@@ -70,8 +69,7 @@ function Body() {
             clearInput();
             queryClient.invalidateQueries(['tasks']);
         },
-        onError: (error) => {
-            console.error("Error submitting form:", error);
+        onError: () => {
             toast.error("Failed to add task");
         }
     });
@@ -134,12 +132,12 @@ function Body() {
     return (
         <>
             {/* Body */}
-            <div className={`h-screen relative ${theme ? 'bg-gradient-to-bl from-[#e9e5da] to-[#d5e2ce]' : 'bg-gradient-to-bl from-[#635e57] to-[#697265]'}`}>
+            <div className={`h-screen relative ${theme === 'light' ? 'body-light' : 'body-dark'}`}>
                 <ToastContainer />
                 <div className='navbar'>
                     <div className='navContent'>
                         <img src={logo} alt="404" className='w-10' />
-                        <p className={`heading ${theme ? 'text-black' : 'text-white'}`}>Task Manager</p>
+                        <p className={`heading ${theme === 'light' ? 'text-black' : 'text-white'}`}>Task Manager</p>
                     </div>
 
                     <div className='navContent'>
@@ -150,14 +148,16 @@ function Body() {
                             <Filter setFilterValue={setFilterValue} />
                         </div>
                         <div>
-                            <EmpFilter />
+                            <EmpFilter setEmpLabels={setEmpLabels} />
                         </div>
-                        <button onClick={toggleTheme} className={`theme-box group  ${theme ? 'shadow-black' : 'shadow-white bg-gray-50/20'}`}>{theme ? <GoSun /> : <GoMoon className='text-white moon' />}</button>
+                        <button onClick={toggleTheme} className={`theme-box ${theme === 'light' ? 'bg-transparent' : 'bg-gray-50/20'} group`}>
+                            {theme === 'light' ? <GoSun /> : <GoMoon className='moon' />}
+                        </button>
                     </div>
                 </div>
 
                 <div className='px-10'>
-                    <TaskList searchValue={searchValue} filterValue={filterValue} />
+                    <TaskList searchValue={searchValue} filterValue={filterValue} empLabels={empLabels} />
                 </div>
                 <div className='relative group'>
                     <div className='extenal-addTask' onClick={openForm}>+</div>
@@ -168,7 +168,7 @@ function Body() {
             </div>
 
             {open ? (
-                <div className={`h-screen w-screen edit-form ${theme ? 'bg-white/80' : 'bg-black/80'}`}>
+                <div className={`h-screen w-screen edit-form ${theme === 'light' ? 'bg-white/80' : 'bg-black/80'}`}>
                     <div className='formBg'>
                         <form className='form-div gap-5' onSubmit={handleSubmit}>
                             <button className='formClose' onClick={clearInput}>
@@ -187,7 +187,7 @@ function Body() {
                                         placeholder='Task ID'
                                         required
                                     />
-                                    {errors.task_id && <span className="text-red-500 text-sm">{errors.task_id}</span>}
+                                    {errors.task_id && <span className="validation-error">{errors.task_id}</span>}
                                 </div>
                                 {/* Task Name */}
                                 <div className='form-div'>
@@ -200,7 +200,7 @@ function Body() {
                                         placeholder='Task Name'
                                         required
                                     />
-                                    {errors.task_name && <span className="text-red-500 text-sm">{errors.task_name}</span>}
+                                    {errors.task_name && <span className="validation-error">{errors.task_name}</span>}
                                 </div>
                             </div>
 
@@ -217,7 +217,7 @@ function Body() {
                                         isClearable
                                         required
                                     />
-                                    {errors.deadline && <span className="text-red-500 text-sm">{errors.deadline}</span>}
+                                    {errors.deadline && <span className="validation-error">{errors.deadline}</span>}
                                     {!formData.deadline && (
                                         <MdCalendarToday className="datePicker-icon" />
                                     )}
@@ -225,7 +225,7 @@ function Body() {
 
 
                                 {/* Task assign to */}
-                                <div className='form-div w-[48%]'>
+                                <div className='form-div'>
                                     <Autocomplete
                                         options={empData.map((emp) => ({
                                             label: emp.emp_name
@@ -249,7 +249,7 @@ function Body() {
                                             </div>
                                         )}
                                     />
-                                    {errors.assign && <span className="text-red-500 text-sm">{errors.assign}</span>}
+                                    {errors.assign && <span className="validation-error">{errors.assign}</span>}
                                 </div>
                             </div>
                             <div>
@@ -266,7 +266,7 @@ function Body() {
                                     <option value="Medium">🟡 Medium</option>
                                     <option value="High">🔴 High</option>
                                 </select>
-                                {errors.priority && <span className="text-red-500 text-sm">{errors.priority}</span>}
+                                {errors.priority && <span className="validation-error">{errors.priority}</span>}
                             </div>
                             {/* Task Description */}
                             <div className='form-div'>
@@ -279,7 +279,7 @@ function Body() {
                                     placeholder='Description'
                                     required
                                 ></textarea>
-                                {errors.description && <span className="text-red-500 text-sm">{errors.description}</span>}
+                                {errors.description && <span className="validation-error">{errors.description}</span>}
                             </div>
                             <button type="submit" className='button'>Add&nbsp;Task</button>
                         </form>

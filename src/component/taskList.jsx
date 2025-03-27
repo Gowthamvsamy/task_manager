@@ -19,7 +19,7 @@ const reducer = (state, action) => ({
 }[action.type] || state);
 
 
-function TaskList({ searchValue, filterValue }) {
+function TaskList({ searchValue, filterValue, empLabels }) {
 
     // context
     const { open, setOpen, theme } = useTheme();
@@ -64,6 +64,7 @@ function TaskList({ searchValue, filterValue }) {
             toast.error("Task Changing Error");
         }
     });
+    
 
     // use to Search and Filter the task
     const filteredTasks = Array.isArray(taskData)
@@ -73,16 +74,27 @@ function TaskList({ searchValue, filterValue }) {
             )
             .filter((task) => {
                 if (!Array.isArray(filterValue) || filterValue.includes("All")) {
-                    return true; 
+                    return true;
                 }
-    
+
                 // Check if task priority matches any selected filters
-                return filterValue.some((value) => 
+                return filterValue.some((value) =>
                     (task?.priority || "").toLowerCase().includes(value.toLowerCase())
                 );
             })
+            .filter((task) => {
+
+                if (!Array.isArray(empLabels) || empLabels.length === 0) {
+                    return true;
+                }
+                
+                return empLabels.some((value) =>
+                    (task?.assign || "").toLowerCase().includes(value.toLowerCase())
+                )
+            })
+
         : [];
-    
+
     // Move task to In Progress or Done
     const moveToInProgress = (id, newStatus) => {
         updateTaskMutation.mutate({ id, newStatus });
@@ -100,8 +112,8 @@ function TaskList({ searchValue, filterValue }) {
         setOpen(true);
     }
 
-     // Refetch tasks when opening the form
-     useEffect(() => {
+    // Refetch tasks when opening the form
+    useEffect(() => {
         if (open) {
             refetch();
         }
@@ -117,7 +129,7 @@ function TaskList({ searchValue, filterValue }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
-                            <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
+                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
                                     <p className='card-title'>{task.task_id} : {task.task_name}</p>
                                     <div className='flex gap-2'>
@@ -172,7 +184,7 @@ function TaskList({ searchValue, filterValue }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
-                            <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
+                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
                                     <p className='card-title'>{task.task_id} : {task.task_name}</p>
                                     <div className='flex gap-2'>
@@ -224,7 +236,7 @@ function TaskList({ searchValue, filterValue }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
-                            <div key={task.task_id} className={`task-item ${theme ? "bg-white/90" : "bg-gray-300"}`}>
+                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "bg-white/90" : "bg-gray-300"}`}>
                                 <div className='flex justify-between'>
                                     <p className='card-title'>{task.task_id} : {task.task_name}</p>
 
