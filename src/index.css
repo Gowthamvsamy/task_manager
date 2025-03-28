@@ -169,15 +169,6 @@ option {
   @apply text-black
 }
 
-/* .searchWrapper{
-  @apply !border-none !p-0 !m-0 !w-[220px]
-}
-
-.multiSelectContainer input {
-  @apply !mt-0 !bg-[#EAE9DF] 
-}
- */
-
 .css-13cymwt-control {
   @apply !border-0 !bg-transparent !rounded-md !shadow-md hover:!bg-gray-50 !text-gray-500 !w-full hover:!outline-none
 }
