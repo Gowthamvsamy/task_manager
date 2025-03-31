@@ -169,8 +169,12 @@ option {
   @apply text-black
 }
 
+.task-input option:disabled {
+  color: gray;
+}
+
 .css-13cymwt-control {
-  @apply !border-0 !bg-transparent !rounded-md !shadow-md hover:!bg-gray-50 !text-gray-500 !w-full hover:!outline-none
+  @apply !border-gray-200/20 !bg-transparent !rounded-md !shadow-md hover:!bg-gray-50 !text-gray-500 !w-full hover:!outline-none focus:!border-0
 }
 
 .css-t3ipsp-control {
@@ -199,4 +203,8 @@ option {
 
 .validation-error{
   @apply text-red-500 text-sm
+}
+
+.react-datepicker-wrapper{
+  @apply w-full
 }

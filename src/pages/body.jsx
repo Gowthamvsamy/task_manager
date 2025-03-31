@@ -10,6 +10,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Filter from '../component/filter';
 import EmpFilter from '../component/empFilter';
 import AddForm from '../component/addForm';
+import AddEmployee from '../component/addEmployee';
 
 function Body() {
 
@@ -17,6 +18,7 @@ function Body() {
     const [searchValue, setSearchValue] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [empLabels, setEmpLabels] = useState([]);
+    const [empForm, setEmpForm] = useState(false)
 
     // use context
     const { theme, toggleTheme, open, setOpen } = useTheme();
@@ -25,6 +27,10 @@ function Body() {
     // Open Add Task form
     const openForm = () => {
         setOpen(true);
+    }
+
+    const openEmp = () => {
+        setEmpForm(true);
     }
 
     return (
@@ -48,6 +54,11 @@ function Body() {
                         <div>
                             <EmpFilter setEmpLabels={setEmpLabels} />
                         </div>
+                        <div>
+                            <button onClick={openEmp} className='theme-box text-gray-500 py-[7px] border'>
+                                Add Employee
+                            </button>
+                        </div>
                         <button onClick={toggleTheme} className={`theme-box ${theme === 'light' ? 'bg-transparent' : 'bg-gray-50/20'} group`}>
                             {theme === 'light' ? <GoSun /> : <GoMoon className='moon' />}
                         </button>
@@ -67,6 +78,9 @@ function Body() {
 
             {open ? (
                 <AddForm />
+            ) : null}
+            {empForm ? (
+                <AddEmployee />
             ) : null}
         </>
     )

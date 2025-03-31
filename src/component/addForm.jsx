@@ -17,7 +17,7 @@ function AddForm() {
     const { data: empData = [] } = useQuery({
         queryKey: ['employee'],
         queryFn: () =>
-            fetch("http://localhost:5000/emp")
+            fetch("http://localhost:5000/emp/all")
                 .then(res => res.json())
                 .then(data => data?.data || [])
                 .catch(() => {
@@ -74,6 +74,7 @@ function AddForm() {
         { name: 'task_id', type: 'text', placeholder: 'Task ID', required: true },
         { name: 'task_name', type: 'text', placeholder: 'Task Name', required: true },
         { name: 'assign', type: 'autocomplete', placeholder: 'Assign To', required: true },
+        { name: 'deadline', type: 'date', placeholder: 'Deadline', required: true },
         {
             name: 'priority', type: 'select', placeholder: 'Select Priority', required: true, options: [
                 { value: 'Low', label: '🟢 Low' },
@@ -81,12 +82,16 @@ function AddForm() {
                 { value: 'High', label: '🔴 High' }
             ]
         },
-        { name: 'deadline', type: 'date', placeholder: 'Deadline', required: true },
+        {
+            name: 'status', type: 'select', placeholder: 'Todo', required: true, defaultValue: 'Todo', options: [
+                { value: 'Todo', label: '🟡 Todo' },
+            ]
+        },
         { name: 'description', type: 'textarea', placeholder: 'Description', required: true }
     ];
 
     return (
-        <Form fields={fields} onSubmit={handleSubmit} empData={empData} validateForm={validateForm} errors={errors} />
+        <Form title={'Add Task Form'} fields={fields} onSubmit={handleSubmit} empData={empData} validateForm={validateForm} errors={errors} />
     )
 }
 

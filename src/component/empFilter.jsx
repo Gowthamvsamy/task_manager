@@ -17,7 +17,7 @@ function EmpFilter({ setEmpLabels }) {
     const { data: empData = [] } = useQuery({
         queryKey: ['employee'],
         queryFn: () =>
-            fetch("http://localhost:5000/emp")
+            fetch("http://localhost:5000/emp/all")
                 .then(res => res.json())
                 .then(data => data?.data || [])
                 .catch(() => {

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../context/themeContext';
 import DatePicker from 'react-datepicker';
 import { MdCalendarToday } from 'react-icons/md';
 import { Autocomplete } from '@mui/material';
 import close from '../assets/close.png';
 
-function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, initialData = {} }) {
+function Form({ onSubmit, fields, empData = [], validateForm, title, initialData = {} }) {
 
     const { theme, setOpen } = useTheme();
 
@@ -13,17 +13,12 @@ function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, i
     const [formData, setFormData] = useState(() => {
         const initialFormData = {};
         fields.forEach(field => {
-            initialFormData[field.name] = initialData[field.name] || '';
+            initialFormData[field.name] = initialData[field.name] || field.defaultValue || '';
         });
         return initialFormData;
     });
 
-    useEffect(() => {
-        setFormData(initialData);  // Set initial data when component mounts or data changes
-    }, [initialData]);
-
     const clearInput = () => {
-        cleanUp(formData);
         setOpen(false);
     };
 
@@ -36,20 +31,20 @@ function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, i
         setFormData({ ...formData, deadline: date ? date.toISOString().split('T')[0] : '' });
     };
 
-    const handleAutoCompleteChange = (_, newValue) => {
-        setFormData({ ...formData, assign: newValue ? newValue.label : '' });
-    };
-
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent default form submission behavior
+
         if (validateForm) {
             if (validateForm(formData)) {
-                onSubmit(e, formData);
+                onSubmit(e, formData); // Call the parent function with form data
+                setFormData(initialData); // Reset form data after submission
             }
         } else {
             onSubmit(e, formData);
+            setFormData(initialData); // Reset form data after submission
         }
     };
+
 
     return (
         <>
@@ -59,11 +54,12 @@ function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, i
                         <button className='formClose' onClick={clearInput}>
                             <img src={close} alt="404" className='w-6' />
                         </button>
-                        <p className='form-title'>Edit Task Form</p>
+                        
+                        <p className='form-title'>{title}</p>
 
-                        <div className="grid grid-cols-2 gap-5">
+                        <div className="grid grid-cols-2 gap-x-3">
                             {fields.map((field, index) => (
-                                <div key={index} className="flex flex-col gap-3">
+                                <div key={index} className="flex">
                                     {field.type === 'text' && (
                                         <input
                                             type="text"
@@ -75,7 +71,37 @@ function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, i
                                             required
                                         />
                                     )}
+                                </div>
+                            ))}
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-3">
+                            {fields.map((field, index) => (
+                                <div key={index} className="flex">
 
+
+                                    {field.type === 'select' && (
+                                        <select
+                                            className="task-input"
+                                            name={field.name}
+                                            value={formData[field.name] || ''}
+                                            onChange={handleChange}
+                                            required
+                                        >
+                                            <option value="" disabled>{field.placeholder}</option>
+                                            {field.options.map((opt) => (
+                                                <option key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-x-3">
+                            {fields.map((field, index) => (
+                                <div key={index} className="flex">
                                     {field.type === 'date' && (
                                         <div className='relative'>
                                             <DatePicker
@@ -96,12 +122,15 @@ function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, i
 
                                     {field.type === 'autocomplete' && (
                                         <Autocomplete
-                                            options={empData.map((emp) => ({
-                                                label: emp.emp_name
-                                            }))}
-                                            getOptionLabel={(option) => option.label}
-                                            value={empData.find(emp => emp.emp_name === formData.assign) || null}
-                                            onChange={handleAutoCompleteChange}
+                                            options={empData} // Keep full employee objects
+                                            getOptionLabel={(option) => option?.emp_name || ""} // Ensure string value
+                                            value={empData.find(emp => emp.emp_name === formData.assign) || null} // Ensure correct value
+                                            onChange={(event, newValue) => {
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    assign: newValue ? newValue.emp_name : "" // Ensure correct property update
+                                                }));
+                                            }}
                                             renderInput={(params) => (
                                                 <div ref={params.InputProps.ref} className="task-input">
                                                     <input
@@ -115,22 +144,13 @@ function Form({ onSubmit, cleanUp, fields, empData = [], validateForm, errors, i
                                         />
                                     )}
 
-                                    {field.type === 'select' && (
-                                        <select
-                                            className="task-input text-gray-400"
-                                            name={field.name}
-                                            value={formData[field.name] || ''}
-                                            onChange={handleChange}
-                                            required
-                                        >
-                                            <option value="" disabled>{field.placeholder}</option>
-                                            {field.options.map((opt) => (
-                                                <option key={opt.value} value={opt.value}>
-                                                    {opt.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="grid grid-cols-1">
+                            {fields.map((field, index) => (
+                                <div key={index} className="flex">
 
                                     {field.type === 'textarea' && (
                                         <textarea

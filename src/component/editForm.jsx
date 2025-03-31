@@ -6,6 +6,7 @@ import Form from './form';
 
 function EditForm({ task, onClose, setUpdated }) {
 
+
     // State to hold the task being edited
     const [updatedTask, setUpdatedTask] = useState(task);
 
@@ -34,18 +35,28 @@ function EditForm({ task, onClose, setUpdated }) {
     // Handle form submission
     const handleSubmit = (e, formData) => {
         e.preventDefault();
-
+    
+        // Check if the form data is different from the original task data
+        const hasChanges = Object.keys(formData).some(key => formData[key] !== updatedTask[key]);
+    
+        if (!hasChanges) {
+            onClose(false);
+            toast.info("No changes detected.");
+            return;
+        }
+    
         const isConfirmed = window.confirm("Are you sure you want to update this task?");
         if (isConfirmed) {
             updateTaskMutation.mutate({ ...updatedTask, ...formData });
         }
     };
+    
 
     // Fetch employee list
     const { data: empData = [] } = useQuery({
         queryKey: ['employee'],
         queryFn: () =>
-            fetch("http://localhost:5000/emp")
+            fetch("http://localhost:5000/emp/all")
                 .then(res => res.json())
                 .then(data => data?.data || [])
                 .catch(() => {
@@ -79,6 +90,7 @@ function EditForm({ task, onClose, setUpdated }) {
     return (
         <>
             <Form
+                title={'Edit Task Form'}
                 fields={fields}
                 onSubmit={handleSubmit}
                 empData={empData}
