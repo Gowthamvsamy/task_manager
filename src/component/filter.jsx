@@ -1,6 +1,6 @@
 // import
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import React from 'react'
+import React, { useState } from 'react'
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { useTheme } from '../context/themeContext';
 
@@ -9,60 +9,63 @@ function Filter({ setFilterValue }) {
     // use context
     const { theme } = useTheme();
 
-    // HandleClick for filter type
+    // state
+    const [selectedPriorities, setSelectedPriorities] = useState([])
+
+    // HandleClick for multi-select
     const handleClick = (value) => {
-        setFilterValue(value);
-    }
+        setSelectedPriorities((prev) => {
+            let updatedSelection;
+    
+            if (value === "All") {
+                // If "all" is selected, clear other selections
+                updatedSelection = ["All"];
+            } else {
+                // Remove "all" if any other priority is selected
+                updatedSelection = prev.includes("All")
+                    ? [value]                    // Replace "all" with the selected value
+                    : prev.includes(value) 
+                        ? prev.filter((item) => item !== value)  // Remove if already selected
+                        : [...prev, value];                      // Add if not selected
+            }
+    
+            setFilterValue(updatedSelection);  // Pass the updated selection
+            return updatedSelection;
+        });
+    };
+    
 
     return (
         <>
             <Menu as="div" className="menuBox">
                 {/* Filter Button */}
                 <div className='menuBoxdiv'>
-                    <MenuButton className={`menuButton rounded-md text-sm  shadow-md hover:bg-gray-50 ${theme ? 'text-gray-500' : 'text-white hover:text-gray-500'}`}>
-                        Filter
-                        <RiArrowDropDownLine aria-hidden="true" className="-mr-1 size-5" />
+                    <MenuButton className={`menuButton filterBtn ${theme === 'light' ? 'light' : 'dark'}`}>
+                        {selectedPriorities.length > 0 ? selectedPriorities.join(', ') : 'Priority'}
+                        <RiArrowDropDownLine aria-hidden="true" className="riDropDownLine" />
                     </MenuButton>
                 </div>
+
                 {/* Filter Items */}
-                <MenuItems transition className="w-32 meniItems">
+                <MenuItems className="meniItems">
                     <div>
-                        <MenuItem>
-                            <button
-                                value="all"
-                                onClick={() => handleClick("all")}
-                                className="filterMenu hover:text-gray-700"
-                            >
-                                All
-                            </button>
-                        </MenuItem>
-                        <MenuItem>
-                            <button
-                                value="low"
-                                onClick={() => handleClick("low")}
-                                className="filterMenu hover:text-gray-700"
-                            >
-                                🟢 Low
-                            </button>
-                        </MenuItem>
-                        <MenuItem>
-                            <button
-                                value="medium"
-                                onClick={() => handleClick("medium")}
-                                className="filterMenu hover:text-gray-700"
-                            >
-                                🟡 Medium
-                            </button>
-                        </MenuItem>
-                        <MenuItem>
-                            <button
-                                value="high"
-                                onClick={() => handleClick("high")}
-                                className="filterMenu hover:text-gray-700"
-                            >
-                                🔴 High
-                            </button>
-                        </MenuItem>
+                        {['All', 'Low', 'Medium', 'High'].map((priority) => (
+                            <MenuItem key={priority}>
+                                <div className="filterMenu">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedPriorities.includes(priority)}
+                                        onChange={() => handleClick(priority)}
+                                        value={priority}
+                                    />
+                                    <label htmlFor="">
+                                        {priority === "All" ? "All" : 
+                                         priority === "Low" ? "🟢 Low" : 
+                                         priority === "Medium" ? "🟡 Medium" : "🔴 High"}
+                                    </label>
+                                </div>
+                            </MenuItem>
+                        ))}
                     </div>
                 </MenuItems>
             </Menu>
@@ -70,4 +73,4 @@ function Filter({ setFilterValue }) {
     )
 }
 
-export default Filter
+export default Filter;
