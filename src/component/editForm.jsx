@@ -66,35 +66,36 @@ function EditForm({ task, onClose, setUpdated }) {
     });
 
     const fields = [
-        { name: 'task_id', type: 'text', placeholder: 'Task ID', required: true },
-        { name: 'task_name', type: 'text', placeholder: 'Task Name', required: true },
-        { name: 'assign', type: 'autocomplete', placeholder: 'Assign To', required: true },
-        { name: 'deadline', type: 'date', placeholder: 'Deadline', required: true },
+        { name: 'task_id', type: 'text', required: true },
+        { name: 'task_name', type: 'text', required: true},
+        { name: 'assign', type: 'autocomplete', required: true },
+        { name: 'deadline', type: 'date', required: true },
         {
-            name: 'priority', type: 'select', placeholder: 'Select Priority', required: true, options: [
+            name: 'priority', type: 'select', required: true, options: [
                 { value: 'Low', label: '🟢 Low' },
                 { value: 'Medium', label: '🟡 Medium' },
                 { value: 'High', label: '🔴 High' }
             ]
         },
         {
-            name: 'status', type: 'select', placeholder: 'Select status', required: true, options: [
+            name: 'status', type: 'select', required: true, options: [
                 { value: 'Todo', label: '🟡 Todo' },
                 { value: 'In Progress', label: '🔵 In Progress' },
                 { value: 'Done', label: '🟢 Done' }
             ]
         },
-        { name: 'description', type: 'textarea', placeholder: 'Description', required: true }
+        { name: 'description', type: 'textarea', required: true }
     ];
 
     return (
         <>
             <Form
                 title={'Edit Task Form'}
+                btn={"Edit Task"}
                 fields={fields}
                 onSubmit={handleSubmit}
                 empData={empData}
-                initialData={updatedTask}   // Pass the initial task data for pre-filling
+                initialData={updatedTask}
                 setUpdatedTask={setUpdatedTask}
             />
         </>

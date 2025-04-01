@@ -51,7 +51,7 @@ function EmpFilter({ setEmpLabels }) {
                     }))}
                     value={selectedEmp}
                     onChange={handleChange}
-                    className={`basic-multi-select !rounded-md ${theme === 'light' ? 'bg-transparent' : 'bg-gray-50/20 light'}`}
+                    className={`basic-multi-select ${theme === 'light' ? 'light' : 'dark'}`}
                     classNamePrefix="select"
                     placeholder="Select Employee"
                     maxMenuHeight={"200px"}

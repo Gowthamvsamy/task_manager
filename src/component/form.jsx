@@ -5,9 +5,9 @@ import { MdCalendarToday } from 'react-icons/md';
 import { Autocomplete } from '@mui/material';
 import close from '../assets/close.png';
 
-function Form({ onSubmit, fields, empData = [], validateForm, title, initialData = {} }) {
+function Form({ onSubmit, fields, empData = [], validateForm, title, initialData = {}, btn, errors = {} }) {
 
-    const { theme, setOpen } = useTheme();
+    const { theme, setOpen, setEmpForm } = useTheme();
 
     // Initialize form data with initial values
     const [formData, setFormData] = useState(() => {
@@ -20,6 +20,7 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
 
     const clearInput = () => {
         setOpen(false);
+        setEmpForm(false);
     };
 
     const handleChange = (e) => {
@@ -48,37 +49,42 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
 
     return (
         <>
-            <div className={`h-screen w-screen edit-form ${theme === 'light' ? 'bg-white/80' : 'bg-black/80'}`}>
+            <div className={`edit-form ${theme === 'light' ? 'light' : 'dark'}`}>
                 <div className='formBg'>
-                    <form className='form-div gap-5' onSubmit={handleSubmit}>
+                    <form className='form-div' onSubmit={handleSubmit}>
                         <button className='formClose' onClick={clearInput}>
-                            <img src={close} alt="404" className='w-6' />
+                            <img src={close} alt="404" width={25} />
                         </button>
-                        
+
                         <p className='form-title'>{title}</p>
 
-                        <div className="grid grid-cols-2 gap-x-3">
+                        <div className="form-input">
                             {fields.map((field, index) => (
-                                <div key={index} className="flex">
+                                <div key={index}>
                                     {field.type === 'text' && (
-                                        <input
-                                            type="text"
-                                            name={field.name}
-                                            value={formData[field.name] || ''}
-                                            onChange={handleChange}
-                                            className="task-input"
-                                            placeholder={field.placeholder}
-                                            required
-                                        />
+                                        <>
+                                            <input
+                                                type="text"
+                                                name={field.name}
+                                                value={formData[field.name] || ''}
+                                                onChange={handleChange}
+                                                className="task-input"
+                                                placeholder={field.placeholder}
+                                                required
+                                                disabled={initialData[field.name] ? true : false}
+                                            />
+                                            {errors && errors[field.name] && (
+                                                <span className="validation-error">{errors[field.name]}</span>
+                                            )}
+                                        </>
                                     )}
                                 </div>
+
                             ))}
                         </div>
-                        <div className="grid grid-cols-2 gap-x-3">
+                        <div className="form-input">
                             {fields.map((field, index) => (
-                                <div key={index} className="flex">
-
-
+                                <div key={index}>
                                     {field.type === 'select' && (
                                         <select
                                             className="task-input"
@@ -99,17 +105,17 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-2 gap-x-3">
+                        <div className="form-input">
                             {fields.map((field, index) => (
-                                <div key={index} className="flex">
+                                <div key={index}>
                                     {field.type === 'date' && (
-                                        <div className='relative'>
+                                        <div className='datePicker'>
                                             <DatePicker
                                                 selected={formData.deadline ? new Date(formData.deadline) : null}
                                                 onChange={handleDateChange}
                                                 dateFormat="yyyy-MM-dd"
                                                 placeholderText="Select a date"
-                                                className="placeholder:pl-6 task-input"
+                                                className="placeholder task-input"
                                                 minDate={new Date()}
                                                 isClearable
                                                 required
@@ -136,7 +142,7 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
                                                     <input
                                                         {...params.inputProps}
                                                         placeholder="Select an Employee"
-                                                        className="autocomplete-input w-full"
+                                                        className="autocomplete-input"
                                                         required
                                                     />
                                                 </div>
@@ -148,9 +154,9 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
                             ))}
                         </div>
 
-                        <div className="grid grid-cols-1">
+                        <div className="form-input-textarea">
                             {fields.map((field, index) => (
-                                <div key={index} className="flex">
+                                <div key={index}>
 
                                     {field.type === 'textarea' && (
                                         <textarea
@@ -167,8 +173,8 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
                             ))}
                         </div>
 
-                        <div className="flex justify-end mt-5">
-                            <button type="submit" className='button'>Update Task</button>
+                        <div className="submit-btn">
+                            <button type="submit" className='button'>{btn}</button>
                         </div>
                     </form>
                 </div>

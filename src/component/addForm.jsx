@@ -46,13 +46,10 @@ function AddForm() {
     // Form validation
     const validateForm = (formData) => {
         const newErrors = {};
-        const { task_id, task_name, deadline, assign, priority } = formData;
+        const { task_id, task_name } = formData;
 
-        if (task_id.length < 3) newErrors.task_id = "Task ID must be at least 3 characters";
-        if (task_name.length < 5) newErrors.task_name = "Task name must be at least 5 characters";
-        if (!deadline) newErrors.deadline = "Please select a deadline";
-        if (!assign) newErrors.assign = "Please assign an employee";
-        if (!priority) newErrors.priority = "Please select a priority";
+        if (task_id.length < 3) newErrors.task_id = "Must be at least 3 characters";
+        if (task_name.length < 5) newErrors.task_name = "Must be at least 5 characters";
 
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -67,6 +64,7 @@ function AddForm() {
         }
 
         addTaskMutation.mutate(data);
+        setErrors(null)
         setOpen(false);
     }
 
@@ -91,7 +89,15 @@ function AddForm() {
     ];
 
     return (
-        <Form title={'Add Task Form'} fields={fields} onSubmit={handleSubmit} empData={empData} validateForm={validateForm} errors={errors} />
+        <Form
+            title={'Add Task Form'}
+            btn={"Add Task"}
+            fields={fields}
+            onSubmit={handleSubmit}
+            empData={empData}
+            validateForm={validateForm}
+            errors={errors}
+        />
     )
 }
 

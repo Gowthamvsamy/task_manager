@@ -7,6 +7,7 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { BiSolidEdit } from "react-icons/bi";
 import { GoArrowRight } from "react-icons/go";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { MdDeleteOutline } from 'react-icons/md';
 
 
 // Initial state
@@ -64,7 +65,24 @@ function TaskList({ searchValue, filterValue, empLabels }) {
             toast.error("Task Changing Error");
         }
     });
-    
+
+    // Mutation for Delete task
+    const deleteTaskMutation = useMutation({
+        mutationFn: (id) =>
+            fetch(`http://localhost:5000/task/delete/${id}`, {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+            }),
+            
+        onSuccess: () => {
+            toast.success("Task Deleted Successfully");
+            queryClient.invalidateQueries(['tasks']);
+        },
+        onError: () => {
+            toast.error("Error on Task Deletion");
+        }
+    });
+
 
     // use to Search and Filter the task
     const filteredTasks = Array.isArray(taskData)
@@ -87,7 +105,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                 if (!Array.isArray(empLabels) || empLabels.length === 0) {
                     return true;
                 }
-                
+
                 return empLabels.some((value) =>
                     (task?.assign || "").toLowerCase().includes(value.toLowerCase())
                 )
@@ -119,6 +137,10 @@ function TaskList({ searchValue, filterValue, empLabels }) {
         }
     }, [open, refetch]);
 
+    const deleteTask = (id) => {
+        deleteTaskMutation.mutate(id);
+    }
+
     return (
         <>
             <div className='task'>
@@ -129,43 +151,47 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "Todo")
                         .map(task => (
-                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "bg-white/90" : "bg-gray-300"}`}>
-                                <div className='flex justify-between'>
+                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "light" : "dark"}`}>
+                                <div className='card'>
                                     <p className='card-title'>{task.task_id} : {task.task_name}</p>
-                                    <div className='flex gap-2'>
-                                        <Menu as="div" className="menuBox">
-                                            <div>
-                                                <MenuButton className="menuButton">
-                                                    <BsThreeDotsVertical className='text-xl cursor-pointer' />
-                                                </MenuButton>
+                                    <Menu as="div" className="menuBox">
+                                        <div>
+                                            <MenuButton className="menuButton">
+                                                <BsThreeDotsVertical />
+                                            </MenuButton>
+                                        </div>
+                                        <MenuItems transition className="meniItems">
+                                            <div className=' form-div form-menu'>
+                                                <MenuItem>
+                                                    <button onClick={() => viewEdite(task)} className='menuItem'>
+                                                        <BiSolidEdit />
+                                                        <p>Edit</p>
+                                                    </button>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <button onClick={() => {
+                                                        moveToInProgress(task._id, "In Progress")
+                                                        dispatchStatus({ type: "In Progress" })
+                                                    }} className='menuItem'>
+                                                        <GoArrowRight />
+                                                        <p>Move</p>
+                                                    </button>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <button className='menuItem' onClick={() => deleteTask(task._id)}>
+                                                        <MdDeleteOutline />
+                                                        <p>Delete</p>
+                                                    </button>
+                                                </MenuItem>
                                             </div>
-                                            <MenuItems transition className="meniItems">
-                                                <div className=' form-div gap-y-2 py-2'>
-                                                    <MenuItem>
-                                                        <button onClick={() => viewEdite(task)} className='menuItem'>
-                                                            <BiSolidEdit />
-                                                            <p className=''>Edit</p>
-                                                        </button>
-                                                    </MenuItem>
-                                                    <MenuItem>
-                                                        <button onClick={() => {
-                                                            moveToInProgress(task._id, "In Progress")
-                                                            dispatchStatus({ type: "In Progress" })
-                                                        }} className='menuItem'>
-                                                            <GoArrowRight />
-                                                            <p>Move</p>
-                                                        </button>
-                                                    </MenuItem>
-                                                </div>
-                                            </MenuItems>
-                                        </Menu>
-                                    </div>
+                                        </MenuItems>
+                                    </Menu>
                                 </div>
-                                <div className='mb-3'>{task.description}</div>
-                                <div className='flex justify-between '>
+                                <div className='description'>{task.description}</div>
+                                <div className='card'>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
-                                    <div className='flex gap-3'>
-                                        <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
+                                    <div className='priority-box'>
+                                        <p className={`taskList-priority ${task.priority === "Low" ? "green" : task.priority === "Medium" ? "yellow" : "red"}`}></p>
                                         <p>{task.assign}</p>
                                     </div>
                                 </div>
@@ -184,43 +210,48 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "In Progress")
                         .map(task => (
-                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "bg-white/90" : "bg-gray-300"}`}>
-                                <div className='flex justify-between'>
+                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "light" : "dark"}`}>
+                                <div className='card'>
                                     <p className='card-title'>{task.task_id} : {task.task_name}</p>
-                                    <div className='flex gap-2'>
-                                        <Menu as="div" className="menuBox">
-                                            <div>
-                                                <MenuButton className="menuButton">
-                                                    <BsThreeDotsVertical className='text-xl cursor-pointer' />
-                                                </MenuButton>
+
+                                    <Menu as="div" className="menuBox">
+                                        <div>
+                                            <MenuButton className="menuButton">
+                                                <BsThreeDotsVertical />
+                                            </MenuButton>
+                                        </div>
+                                        <MenuItems transition className="meniItems">
+                                            <div className=' form-div form-menu'>
+                                                <MenuItem>
+                                                    <button onClick={() => viewEdite(task)} className='menuItem'>
+                                                        <BiSolidEdit />
+                                                        <p>Edit</p>
+                                                    </button>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <button onClick={() => {
+                                                        moveToInProgress(task._id, "Done")
+                                                        dispatchStatus({ type: "Done" })
+                                                    }} className='menuItem'>
+                                                        <GoArrowRight />
+                                                        <p>Move</p>
+                                                    </button>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <button className='menuItem' onClick={() => deleteTask(task._id)}>
+                                                        <MdDeleteOutline />
+                                                        <p>Delete</p>
+                                                    </button>
+                                                </MenuItem>
                                             </div>
-                                            <MenuItems transition className="meniItems">
-                                                <div className=' form-div gap-y-2 py-2'>
-                                                    <MenuItem>
-                                                        <button onClick={() => viewEdite(task)} className='menuItem'>
-                                                            <BiSolidEdit />
-                                                            <p className=''>Edit</p>
-                                                        </button>
-                                                    </MenuItem>
-                                                    <MenuItem>
-                                                        <button onClick={() => {
-                                                            moveToInProgress(task._id, "Done")
-                                                            dispatchStatus({ type: "Done" })
-                                                        }} className='menuItem'>
-                                                            <GoArrowRight />
-                                                            <p>Move</p>
-                                                        </button>
-                                                    </MenuItem>
-                                                </div>
-                                            </MenuItems>
-                                        </Menu>
-                                    </div>
+                                        </MenuItems>
+                                    </Menu>
                                 </div>
-                                <div className='mb-3'>{task.description}</div>
-                                <div className='flex justify-between '>
+                                <div className='description'>{task.description}</div>
+                                <div className='card'>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
-                                    <div className='flex gap-3'>
-                                        <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
+                                    <div className='priority-box'>
+                                        <p className={`taskList-priority ${task.priority === "Low" ? "green" : task.priority === "Medium" ? "yellow" : "red"}`}></p>
                                         <p>{task.assign}</p>
                                     </div>
                                 </div>
@@ -236,33 +267,39 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                     </div>
                     {filteredTasks.filter(task => task.status === "Done")
                         .map(task => (
-                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "bg-white/90" : "bg-gray-300"}`}>
-                                <div className='flex justify-between'>
+                            <div key={task.task_id} className={`task-item ${theme === 'light' ? "light" : "dark"}`}>
+                                <div className='card'>
                                     <p className='card-title'>{task.task_id} : {task.task_name}</p>
 
                                     <Menu as="div" className="menuBox">
                                         <div>
                                             <MenuButton className="menuButton">
-                                                <BsThreeDotsVertical className='text-xl cursor-pointer' />
+                                                <BsThreeDotsVertical />
                                             </MenuButton>
                                         </div>
                                         <MenuItems transition className="meniItems">
-                                            <div className=' form-div gap-y-2 py-2'>
+                                            <div className=' form-div form-menu'>
                                                 <MenuItem>
                                                     <button onClick={() => viewEdite(task)} className='menuItem'>
                                                         <BiSolidEdit />
-                                                        <p className=''>Edit</p>
+                                                        <p>Edit</p>
+                                                    </button>
+                                                </MenuItem>
+                                                <MenuItem>
+                                                    <button className='menuItem' onClick={() => deleteTask(task._id)}>
+                                                        <MdDeleteOutline />
+                                                        <p>Delete</p>
                                                     </button>
                                                 </MenuItem>
                                             </div>
                                         </MenuItems>
                                     </Menu>
                                 </div>
-                                <div className='mb-3'>{task.description}</div>
-                                <div className='flex justify-between '>
+                                <div className='description'>{task.description}</div>
+                                <div className='card'>
                                     <div>{new Date(task.deadline).toISOString().split('T')[0]}</div>
-                                    <div className='flex gap-3'>
-                                        <p className={`taskList-priority ${task.priority === "Low" ? "bg-green-500" : task.priority === "Medium" ? "bg-yellow-500" : "bg-red-500"}`}></p>
+                                    <div className='priority-box'>
+                                        <p className={`taskList-priority ${task.priority === "Low" ? "green" : task.priority === "Medium" ? "yellow" : "red"}`}></p>
                                         <p>{task.assign}</p>
                                     </div>
                                 </div>

@@ -18,10 +18,10 @@ function Body() {
     const [searchValue, setSearchValue] = useState("");
     const [filterValue, setFilterValue] = useState("");
     const [empLabels, setEmpLabels] = useState([]);
-    const [empForm, setEmpForm] = useState(false)
+    
 
     // use context
-    const { theme, toggleTheme, open, setOpen } = useTheme();
+    const { theme, toggleTheme, open, setOpen, empForm, setEmpForm } = useTheme();
 
 
     // Open Add Task form
@@ -36,16 +36,16 @@ function Body() {
     return (
         <>
             {/* Body */}
-            <div className={`h-screen relative ${theme === 'light' ? 'body-light' : 'body-dark'}`}>
+            <div className={`main ${theme === 'light' ? 'body-light' : 'body-dark'}`}>
                 <ToastContainer />
                 <div className='navbar'>
                     <div className='navContent'>
-                        <img src={logo} alt="404" className='w-10' />
-                        <p className={`heading ${theme === 'light' ? 'text-black' : 'text-white'}`}>Task Manager</p>
+                        <img src={logo} alt="404" width={40} />
+                        <p className={`heading ${theme === 'light' ? 'light' : 'dark'}`}>Task Manager</p>
                     </div>
 
                     <div className='navContent'>
-                        <div className='my-6 flex gap-3'>
+                        <div className='nav-list'>
                             <Search setSearchValue={setSearchValue} />
                         </div>
                         <div>
@@ -55,17 +55,17 @@ function Body() {
                             <EmpFilter setEmpLabels={setEmpLabels} />
                         </div>
                         <div>
-                            <button onClick={openEmp} className='theme-box text-gray-500 py-[7px] border'>
+                            <button onClick={openEmp} className={`theme-box add-emp ${theme === 'light' ? 'light' : 'dark'}`}>
                                 Add Employee
                             </button>
                         </div>
-                        <button onClick={toggleTheme} className={`theme-box ${theme === 'light' ? 'bg-transparent' : 'bg-gray-50/20'} group`}>
+                        <button onClick={toggleTheme} className="theme-box bg-gray-50/20 group">
                             {theme === 'light' ? <GoSun /> : <GoMoon className='moon' />}
                         </button>
                     </div>
                 </div>
 
-                <div className='px-10'>
+                <div>
                     <TaskList searchValue={searchValue} filterValue={filterValue} empLabels={empLabels} />
                 </div>
                 <div className='relative group'>

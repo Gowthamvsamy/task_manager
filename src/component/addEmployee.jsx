@@ -8,7 +8,7 @@ function AddEmployee() {
 
     const [errors, setErrors] = useState({});
 
-    const { setOpen } = useTheme();
+    const { setEmpForm } = useTheme();
 
     const queryClient = useQueryClient();
 
@@ -54,13 +54,20 @@ function AddEmployee() {
         }
 
         addEmployeeMutation.mutate(data);
-        setOpen(false);
+        setEmpForm(false);
     }
 
 
     return (
         <>
-            <Form title={'Add Employee Form'} fields={fields} onSubmit={handleSubmit} validateForm={validateForm} errors={errors} />
+            <Form
+                title={'Add Employee Form'}
+                btn={"Add Employee"}
+                fields={fields}
+                onSubmit={handleSubmit}
+                validateForm={validateForm}
+                errors={errors}
+            />
         </>
     )
 }
