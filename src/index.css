@@ -318,8 +318,12 @@ option {
   display: none;
 }
 
-.css-1xc3v61-indicatorContainer{
+.css-1xc3v61-indicatorContainer {
   @apply !text-gray-500
+}
+
+.dark .css-1xc3v61-indicatorContainer {
+  @apply !text-white
 }
 
 .validation-error {
