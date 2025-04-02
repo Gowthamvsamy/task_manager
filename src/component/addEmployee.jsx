@@ -2,13 +2,10 @@ import React, { useState } from 'react'
 import Form from './form'
 import { toast } from 'react-toastify';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useTheme } from '@emotion/react';
 
 function AddEmployee() {
 
     const [errors, setErrors] = useState({});
-
-    const { setEmpForm } = useTheme();
 
     const queryClient = useQueryClient();
 
@@ -45,6 +42,10 @@ function AddEmployee() {
         { name: 'emp_name', type: 'text', placeholder: 'Employee Name', required: true }
     ];
 
+    const formatName = (name) => {
+        return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
+    };
+
     const handleSubmit = (e, data) => {
         e.preventDefault();
 
@@ -53,8 +54,9 @@ function AddEmployee() {
             return;
         }
 
-        addEmployeeMutation.mutate(data);
-        setEmpForm(false);
+        const formattedData = { emp_name: formatName(data.emp_name), emp_id: data.emp_id };
+
+        addEmployeeMutation.mutate(formattedData);
     }
 
 

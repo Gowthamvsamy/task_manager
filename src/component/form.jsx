@@ -44,6 +44,7 @@ function Form({ onSubmit, fields, empData = [], validateForm, title, initialData
             onSubmit(e, formData);
             setFormData(initialData); // Reset form data after submission
         }
+        setEmpForm(false);
     };
 
 
