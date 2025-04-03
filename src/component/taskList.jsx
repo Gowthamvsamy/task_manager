@@ -51,11 +51,11 @@ function TaskList({ searchValue, filterValue, empLabels }) {
 
     // Mutation for updating task status
     const updateTaskMutation = useMutation({
-        mutationFn: ({ id, newStatus }) =>
+        mutationFn: ({ id, boolean, newStatus }) =>
             fetch(`http://localhost:5000/task/update/${id}`, {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: newStatus })
+                body: JSON.stringify({ status: newStatus, is_deleted: boolean }),
             }),
         onSuccess: () => {
             toast.success("Task Updated Successfully");
@@ -66,23 +66,22 @@ function TaskList({ searchValue, filterValue, empLabels }) {
         }
     });
 
-    // Mutation for Delete task
+    // Mutation for soft delete task status
     const deleteTaskMutation = useMutation({
-        mutationFn: (id) =>
-            fetch(`http://localhost:5000/task/delete/${id}`, {
-                method: "DELETE",
+        mutationFn: ({ id, boolean }) =>
+            fetch(`http://localhost:5000/task/update/${id}`, {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({is_deleted: boolean }),
             }),
-            
         onSuccess: () => {
             toast.success("Task Deleted Successfully");
             queryClient.invalidateQueries(['tasks']);
         },
         onError: () => {
-            toast.error("Error on Task Deletion");
+            toast.error("Error of Task Deletion");
         }
     });
-
 
     // use to Search and Filter the task
     const filteredTasks = Array.isArray(taskData)
@@ -137,8 +136,8 @@ function TaskList({ searchValue, filterValue, empLabels }) {
         }
     }, [open, refetch]);
 
-    const deleteTask = (id) => {
-        deleteTaskMutation.mutate(id);
+    const deleteTask = (id, boolean) => {
+        deleteTaskMutation.mutate({ id, boolean });
     }
 
     return (
@@ -149,7 +148,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                     <div className='task-heading todo'>
                         <p>Todo</p>
                     </div>
-                    {filteredTasks.filter(task => task.status === "Todo")
+                    {filteredTasks.filter(task => task.status === "Todo" && task.is_deleted === false)
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme === 'light' ? "light" : "dark"}`}>
                                 <div className='card'>
@@ -178,7 +177,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                                                     </button>
                                                 </MenuItem>
                                                 <MenuItem>
-                                                    <button className='menuItem' onClick={() => deleteTask(task._id)}>
+                                                    <button className='menuItem' onClick={() => deleteTask(task._id, true)}>
                                                         <MdDeleteOutline />
                                                         <p>Delete</p>
                                                     </button>
@@ -208,7 +207,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                     <div className='task-heading progress'>
                         <p>In Progress</p>
                     </div>
-                    {filteredTasks.filter(task => task.status === "In Progress")
+                    {filteredTasks.filter(task => task.status === "In Progress" && task.is_deleted === false)
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme === 'light' ? "light" : "dark"}`}>
                                 <div className='card'>
@@ -238,7 +237,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                                                     </button>
                                                 </MenuItem>
                                                 <MenuItem>
-                                                    <button className='menuItem' onClick={() => deleteTask(task._id)}>
+                                                    <button className='menuItem' onClick={() => deleteTask(task._id, true)}>
                                                         <MdDeleteOutline />
                                                         <p>Delete</p>
                                                     </button>
@@ -265,7 +264,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                     <div className='task-heading done'>
                         <p>Done</p>
                     </div>
-                    {filteredTasks.filter(task => task.status === "Done")
+                    {filteredTasks.filter(task => task.status === "Done" && task.is_deleted === false)
                         .map(task => (
                             <div key={task.task_id} className={`task-item ${theme === 'light' ? "light" : "dark"}`}>
                                 <div className='card'>
@@ -286,7 +285,7 @@ function TaskList({ searchValue, filterValue, empLabels }) {
                                                     </button>
                                                 </MenuItem>
                                                 <MenuItem>
-                                                    <button className='menuItem' onClick={() => deleteTask(task._id)}>
+                                                    <button className='menuItem' onClick={() => deleteTask(task._id, true)}>
                                                         <MdDeleteOutline />
                                                         <p>Delete</p>
                                                     </button>
